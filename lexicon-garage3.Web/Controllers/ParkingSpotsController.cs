@@ -39,7 +39,7 @@ namespace lexicon_garage3.Web.Controllers
             }).ToList();
 
             return View(viewModels);
-    }
+        }
 
 
         // GET: ParkingSpots/Details/5
@@ -97,12 +97,12 @@ namespace lexicon_garage3.Web.Controllers
                     _context.Add(parkingSpot);
                     await _context.SaveChangesAsync();
 
-               
+
                     TempData["SuccessMessage"] = "Parking spot created successfully!";
                 }
                 catch (Exception)
                 {
-                    
+
                     TempData["ErrorMessage"] = "An error occurred while creating the parking spot.";
                     return View(model);
                 }
@@ -129,8 +129,28 @@ namespace lexicon_garage3.Web.Controllers
             {
                 return NotFound();
             }
+
+            var viewModel = new EditParkingSpotViewModel
+            {
+                Id = parkingSpot.Id,
+                Size = Enum.TryParse<Size>(parkingSpot.Size, out var size) ? size : Size.Small,
+                ParkingNumber = parkingSpot.ParkingNumber,
+                HourRate = parkingSpot.HourRate,
+                IsAvailable = parkingSpot.IsAvailable,
+                RegNumber = parkingSpot.RegNumber
+            };
+
             ViewData["RegNumber"] = new SelectList(_context.Set<Vehicle>(), "RegNumber", "RegNumber", parkingSpot.RegNumber);
-            return View(parkingSpot);
+
+            ViewData["Size"] = new SelectList(
+                Enum.GetValues(typeof(Size))
+                    .Cast<Size>()
+                    .Select(s => new { Value = (int)s, Text = s.ToString() }),
+                "Value",
+                "Text"
+            );
+
+            return View(viewModel);
         }
 
         // POST: ParkingSpots/Edit/5
@@ -138,36 +158,44 @@ namespace lexicon_garage3.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Size,ParkingNumber,IsAvailable,HourRate,RegNumber")] ParkingSpot parkingSpot)
+        public async Task<IActionResult> Edit(string id, EditParkingSpotViewModel model)
         {
-            if (id != parkingSpot.Id)
+            if (id != model.Id)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Invalid parking spot ID.";
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var parkingSpot = await _context.ParkingSpot.FindAsync(id);
+                    if (parkingSpot == null)
+                    {
+                        TempData["ErrorMessage"] = "Parking spot not found!";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    parkingSpot.Size = model.Size.ToString();
+                    parkingSpot.ParkingNumber = model.ParkingNumber;
+                    parkingSpot.HourRate = model.HourRate;
+                    parkingSpot.IsAvailable = model.IsAvailable;
+                    parkingSpot.RegNumber = model.RegNumber;
+
                     _context.Update(parkingSpot);
                     await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Parking spot updated successfully!";
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!ParkingSpotExists(parkingSpot.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    TempData["ErrorMessage"] = "An error occurred while updating the parking spot.";
+                    return View(model);
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["RegNumber"] = new SelectList(_context.Set<Vehicle>(), "RegNumber", "RegNumber", parkingSpot.RegNumber);
-            return View(parkingSpot);
+            return View(model); // in case not passing validation
         }
+
 
         // GET: ParkingSpots/Delete/5
         public async Task<IActionResult> Delete(string id)
