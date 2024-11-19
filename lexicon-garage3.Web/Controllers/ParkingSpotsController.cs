@@ -202,6 +202,7 @@ namespace lexicon_garage3.Web.Controllers
         {
             if (id == null)
             {
+                TempData["ErrorMessage"] = "Parking spot not found!";
                 return NotFound();
             }
 
@@ -210,6 +211,7 @@ namespace lexicon_garage3.Web.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (parkingSpot == null)
             {
+                TempData["ErrorMessage"] = "Parking spot not found!";
                 return NotFound();
             }
 
@@ -228,6 +230,7 @@ namespace lexicon_garage3.Web.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Parking spot delete successfully!";
             return RedirectToAction(nameof(Index));
         }
 
