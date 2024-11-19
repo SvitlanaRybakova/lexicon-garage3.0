@@ -1,4 +1,4 @@
-using lexicon_garage3.Web.Data;
+using lexicon_garage3.Persistance.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
