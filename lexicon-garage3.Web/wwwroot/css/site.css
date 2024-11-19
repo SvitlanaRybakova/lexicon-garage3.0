@@ -20,3 +20,19 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+}
+
+.carousel-image-medium {
+    max-width: 75%; 
+    max-height: 600px; 
+    object-fit: cover; 
+    margin: auto;
+}
+
