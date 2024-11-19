@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,9 @@ namespace lexicon_garage3.Core.Entities
 {
     public class Vehicle
     {
+        [Key]
         public string RegNumber { get; set; }
+
         public string Color { get; set; }
         public string Brand { get; set; }
         public string Model { get; set; }

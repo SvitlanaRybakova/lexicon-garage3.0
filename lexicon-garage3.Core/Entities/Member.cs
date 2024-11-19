@@ -14,7 +14,7 @@ namespace lexicon_garage3.Core.Entities
         public int PersonNumber { get; set; }
         public string UserName { get; set; }
 
-        // nav prop 1-1
-        public Vehicle Vehicle { get; set; }
+        // nav prop 1-M
+        public ICollection<Vehicle> Vehicles { get; set; }
     }
 }
