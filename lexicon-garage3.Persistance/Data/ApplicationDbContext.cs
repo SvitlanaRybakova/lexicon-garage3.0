@@ -1,10 +1,9 @@
 ﻿using lexicon_garage3.Core.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Packaging.Signing;
 using System.Security.Cryptography;
 
-namespace lexicon_garage3.Web.Data
+namespace lexicon_garage3.Persistance.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
