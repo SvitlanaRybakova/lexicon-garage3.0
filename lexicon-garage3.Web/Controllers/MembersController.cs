@@ -89,7 +89,16 @@ namespace lexicon_garage3.Web.Controllers
             {
                 return NotFound();
             }
-            return View(member);
+
+            var model = new EditMemberViewModel
+            {
+                Id = member.Id,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                UserName = member.UserName,
+                PersonNumber = member.PersonNumber
+            };
+            return View(model);
         }
 
         // POST: Members/Edit/5
@@ -97,9 +106,9 @@ namespace lexicon_garage3.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,FirstName,LastName,PersonNumber,UserName")] Member member)
+        public async Task<IActionResult> Edit(string id, EditMemberViewModel model)
         {
-            if (id != member.Id)
+            if (id != model.Id)
             {
                 return NotFound();
             }
@@ -108,23 +117,31 @@ namespace lexicon_garage3.Web.Controllers
             {
                 try
                 {
-                    _context.Update(member);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MemberExists(member.Id))
+                    var member = await _context.Member
+                        .FirstOrDefaultAsync(m => m.Id == model.Id);
+
+                    if (member == null)
                     {
+                        TempData["ErrorMessage"] = "Member not found.";
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+                    member.FirstName = model.FirstName;
+                    member.LastName = model.LastName;
+                    member.UserName = model.UserName;
+                    member.PersonNumber = model.PersonNumber;
+
+                    _context.Update(member);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "The data updated successfully!";
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception)
+                {
+                    TempData["ErrorMessage"] = "An error occurred while updating the member.";
+                    return View(model);
+                }
             }
-            return View(member);
+            return View(model);// in case not passing validation
         }
 
         // GET: Members/Delete/5
@@ -157,7 +174,7 @@ namespace lexicon_garage3.Web.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexMembers));
         }
 
         private bool MemberExists(string id)

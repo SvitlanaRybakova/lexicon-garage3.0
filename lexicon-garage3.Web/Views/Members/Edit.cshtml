@@ -1,4 +1,4 @@
-﻿@model lexicon_garage3.Core.Entities.Member
+﻿@model EditMemberViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -43,6 +43,8 @@
 <div>
     <a asp-action="IndexMembers">Back to List</a>
 </div>
+
+@await Html.PartialAsync("_AlertMessages")
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
