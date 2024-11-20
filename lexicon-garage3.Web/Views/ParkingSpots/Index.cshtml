@@ -1,13 +1,13 @@
-﻿@model IEnumerable<lexicon_garage3.Core.Entities.ParkingSpot>
+﻿@model IEnumerable<IndexParkingSpotViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>All Parking Places</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create Parking Place</a>
 </p>
 <table class="table">
     <thead>
@@ -22,12 +22,8 @@
                 @Html.DisplayNameFor(model => model.IsAvailable)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.HourRate)
+                @Html.DisplayNameFor(model => model.HourRate) 
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Vehicle)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -39,14 +35,18 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ParkingNumber)
             </td>
+                <td>
+                    @if (item.IsAvailable)
+                    {
+                        <span class="fluent--presence-available-20-regular"></span>
+                    }
+                    else
+                    {
+                        <span class="iconamoon--unavailable-fill"></span>
+                    }
+                </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsAvailable)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HourRate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Vehicle.RegNumber)
+                @Html.DisplayFor(modelItem => item.HourRate) <span>SEK</span>
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

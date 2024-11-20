@@ -24,8 +24,8 @@
                             asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Privacy" ? "active text-primary" : "text-dark")" 
-                            asp-area="" asp-controller="Home" asp-action="Privacy">Parking Places</a>
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Privacy" ? "active text-primary" : "text-dark")"
+                               asp-area="" asp-controller="ParkingSpots" asp-action="Index">Parking Places</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active text-primary" : "text-dark")" 

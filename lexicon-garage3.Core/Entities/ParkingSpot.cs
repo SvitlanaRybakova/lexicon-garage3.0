@@ -15,9 +15,9 @@ namespace lexicon_garage3.Core.Entities
         public int HourRate { get; set; }
 
         // FK
-        public string RegNumber { get; set; } 
+        public string? RegNumber { get; set; } 
 
         // nav props 1-1
-        public Vehicle Vehicle { get; set; } 
+        public Vehicle? Vehicle { get; set; } 
     }
 }

@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
+using lexicon_garage3.Web.Models.ViewModels.ParkingSpotsViewModels;
+using System.Reflection.Emit;
+
 
 namespace lexicon_garage3.Web.Controllers
 {
@@ -22,9 +25,22 @@ namespace lexicon_garage3.Web.Controllers
         // GET: ParkingSpots
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.ParkingSpot.Include(p => p.Vehicle);
-            return View(await applicationDbContext.ToListAsync());
+            var parkingSpots = await _context.ParkingSpot
+          .Include(p => p.Vehicle)
+          .ToListAsync();
+
+            var viewModels = parkingSpots.Select(p => new IndexParkingSpotViewModel
+            {
+                Id = p.Id,
+                Size = p.Size,
+                ParkingNumber = p.ParkingNumber,
+                IsAvailable = p.IsAvailable,
+                HourRate = p.HourRate,
+            }).ToList();
+
+            return View(viewModels);
         }
+
 
         // GET: ParkingSpots/Details/5
         public async Task<IActionResult> Details(string id)
@@ -48,7 +64,13 @@ namespace lexicon_garage3.Web.Controllers
         // GET: ParkingSpots/Create
         public IActionResult Create()
         {
-            ViewData["RegNumber"] = new SelectList(_context.Set<Vehicle>(), "RegNumber", "RegNumber");
+            ViewData["Size"] = new SelectList(
+             Enum.GetValues(typeof(Size))
+            .Cast<Size>()
+            .Select(s => new { Value = (int)s, Text = s.ToString() }),
+        "Value",
+        "Text"
+    );
             return View();
         }
 
@@ -57,16 +79,41 @@ namespace lexicon_garage3.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Size,ParkingNumber,IsAvailable,HourRate,RegNumber")] ParkingSpot parkingSpot)
+        public async Task<IActionResult> Create(CreateParkingSpotsViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(parkingSpot);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var parkingSpot = new ParkingSpot
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Size = model.Size.ToString(),
+                        ParkingNumber = model.ParkingNumber,
+                        IsAvailable = true,
+                        HourRate = model.HourRate
+                    };
+
+                    _context.Add(parkingSpot);
+                    await _context.SaveChangesAsync();
+
+
+                    TempData["SuccessMessage"] = "Parking spot created successfully!";
+                }
+                catch (Exception)
+                {
+
+                    TempData["ErrorMessage"] = "An error occurred while creating the parking spot.";
+                    return View(model);
+                }
             }
-            ViewData["RegNumber"] = new SelectList(_context.Set<Vehicle>(), "RegNumber", "RegNumber", parkingSpot.RegNumber);
-            return View(parkingSpot);
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                TempData["ErrorMessage"] = "Validation Errors: " + string.Join(", ", errors);
+            }
+
+            return View(model); // not passed validation
         }
 
         // GET: ParkingSpots/Edit/5
@@ -82,8 +129,28 @@ namespace lexicon_garage3.Web.Controllers
             {
                 return NotFound();
             }
+
+            var viewModel = new EditParkingSpotViewModel
+            {
+                Id = parkingSpot.Id,
+                Size = Enum.TryParse<Size>(parkingSpot.Size, out var size) ? size : Size.Small,
+                ParkingNumber = parkingSpot.ParkingNumber,
+                HourRate = parkingSpot.HourRate,
+                IsAvailable = parkingSpot.IsAvailable,
+                RegNumber = parkingSpot.RegNumber
+            };
+
             ViewData["RegNumber"] = new SelectList(_context.Set<Vehicle>(), "RegNumber", "RegNumber", parkingSpot.RegNumber);
-            return View(parkingSpot);
+
+            ViewData["Size"] = new SelectList(
+                Enum.GetValues(typeof(Size))
+                    .Cast<Size>()
+                    .Select(s => new { Value = (int)s, Text = s.ToString() }),
+                "Value",
+                "Text"
+            );
+
+            return View(viewModel);
         }
 
         // POST: ParkingSpots/Edit/5
@@ -91,42 +158,51 @@ namespace lexicon_garage3.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Size,ParkingNumber,IsAvailable,HourRate,RegNumber")] ParkingSpot parkingSpot)
+        public async Task<IActionResult> Edit(string id, EditParkingSpotViewModel model)
         {
-            if (id != parkingSpot.Id)
+            if (id != model.Id)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Invalid parking spot ID.";
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var parkingSpot = await _context.ParkingSpot.FindAsync(id);
+                    if (parkingSpot == null)
+                    {
+                        TempData["ErrorMessage"] = "Parking spot not found!";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    parkingSpot.Size = model.Size.ToString();
+                    parkingSpot.ParkingNumber = model.ParkingNumber;
+                    parkingSpot.HourRate = model.HourRate;
+                    parkingSpot.IsAvailable = model.IsAvailable;
+                    parkingSpot.RegNumber = model.RegNumber;
+
                     _context.Update(parkingSpot);
                     await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Parking spot updated successfully!";
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!ParkingSpotExists(parkingSpot.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    TempData["ErrorMessage"] = "An error occurred while updating the parking spot.";
+                    return View(model);
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["RegNumber"] = new SelectList(_context.Set<Vehicle>(), "RegNumber", "RegNumber", parkingSpot.RegNumber);
-            return View(parkingSpot);
+            return View(model); // in case not passing validation
         }
+
 
         // GET: ParkingSpots/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
+                TempData["ErrorMessage"] = "Parking spot not found!";
                 return NotFound();
             }
 
@@ -135,6 +211,7 @@ namespace lexicon_garage3.Web.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (parkingSpot == null)
             {
+                TempData["ErrorMessage"] = "Parking spot not found!";
                 return NotFound();
             }
 
@@ -153,6 +230,7 @@ namespace lexicon_garage3.Web.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Parking spot delete successfully!";
             return RedirectToAction(nameof(Index));
         }
 
