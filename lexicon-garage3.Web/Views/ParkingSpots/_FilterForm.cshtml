@@ -1,11 +1,14 @@
 ﻿@model IndexParkingSpotViewModel
 
-<form asp-action="Search" method="get">
-    <div class="input-group my-5">
-        <input type="text" class="form-control" placeholder="Search on parking space number" asp-for="ParkingNumber" />
+<form asp-action="Search" method="get" class="my-5">
+    <label for="parkingNumber">
+        Search on parking space number</label>
+    <div class="input-group">
+            <input type="text" class="form-control" id="parkingNumber" asp-for="ParkingNumber" />
+
         <div class="input-group-append">
             <select class="form-control" asp-for="Size" asp-items="Model.Sizes">
-                <option selected="selected" value="">Parking place size</option>
+                <option selected="selected" value="">Parking space size</option>
             </select>
         </div>
         <div class="input-group-append">

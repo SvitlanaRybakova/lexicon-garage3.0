@@ -277,20 +277,20 @@ namespace lexicon_garage3.Web.Controllers
 
         public async Task<IActionResult> Search(SearchParkingSpotViewModel viewModel)
         {
-            var parkingSpot = _context.ParkingSpot.AsQueryable();
+            var parkingSpots = _context.ParkingSpot.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(viewModel.Size))
             {
-                parkingSpot = parkingSpot.Where(m => m.Size.Contains(viewModel.Size));
+                parkingSpots = parkingSpots.Where(m => m.Size.Contains(viewModel.Size));
             }
 
             if (viewModel.ParkingNumber > 0)
             {
-                parkingSpot = parkingSpot.Where(m => m.ParkingNumber == viewModel.ParkingNumber);
+                parkingSpots = parkingSpots.Where(m => m.ParkingNumber == viewModel.ParkingNumber);
             }
 ;
 
-            var viewModels = parkingSpot.Select(p => new IndexParkingSpotViewModel
+            var viewModels = parkingSpots.Select(p => new IndexParkingSpotViewModel
             {
                 Id = p.Id,
                 Size = p.Size,
