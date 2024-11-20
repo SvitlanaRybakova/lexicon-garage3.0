@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
+using lexicon_garage3.Web.Models.ViewModels;
+
 
 namespace lexicon_garage3.Web.Controllers
 {
@@ -20,7 +18,7 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // GET: VehicleTypes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> VehicleTypeIndex()
         {
             return View(await _context.VehicleType.ToListAsync());
         }
@@ -43,10 +41,23 @@ namespace lexicon_garage3.Web.Controllers
             return View(vehicleType);
         }
 
-        // GET: VehicleTypes/Create
+        // GET: VehicleTypes/Create ** Populate the drop down list values for creation
         public IActionResult Create()
         {
-            return View();
+            var model = new VehicleTypeViewModel
+            {
+                VehicleTypeSizes = Enum.GetValues(typeof(VehicleTypeSize))
+                                   .Cast<VehicleTypeSize>()
+                                   .Select(v => new SelectListItem
+                                   {
+                                       Text = v.ToString(),
+                                       Value = v.ToString()
+                                   })
+                                   .ToList()
+            };
+
+
+            return View(model);
         }
 
         // POST: VehicleTypes/Create
@@ -54,15 +65,40 @@ namespace lexicon_garage3.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,VehicleTypeName,VehicleSize,NumOfWheels")] VehicleType vehicleType)
+        public async Task<IActionResult> Create([Bind("Id,VehicleTypeName,SelectedVehicleSize,NumOfWheels")] VehicleTypeViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
+                var vehicleType = new VehicleType
+                {
+                    //Id = viewModel.Id,
+                    VehicleTypeName = viewModel.VehicleTypeName,
+                    VehicleSize = viewModel.SelectedVehicleSize,
+                    NumOfWheels = viewModel.NumOfWheels
+                    
+                };
                 _context.Add(vehicleType);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(VehicleTypeIndex));
             }
-            return View(vehicleType);
+
+            /**Replace with actual logging to find what error has occurred**/
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            foreach (var error in errors)
+            {
+                Console.WriteLine(error); 
+            }
+
+            viewModel.VehicleTypeSizes = Enum.GetValues(typeof(VehicleTypeSize))// repopulate the dropdown list if the creation fails
+                                .Cast<VehicleTypeSize>()
+                                .Select(v => new SelectListItem
+                                {
+                                    Text = v.ToString(),
+                                    Value = v.ToString()
+                                }).ToList();
+                                
+
+            return View(viewModel);
         }
 
         // GET: VehicleTypes/Edit/5

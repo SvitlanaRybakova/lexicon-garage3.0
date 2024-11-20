@@ -14,6 +14,6 @@ namespace lexicon_garage3.Core.Entities
         public int NumOfWheels { get; set; }
 
         // nav prop M-1
-        public ICollection<Vehicle> Vehicles { get; set; }
+        public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
     }
 }
