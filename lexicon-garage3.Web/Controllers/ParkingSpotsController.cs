@@ -23,7 +23,7 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // GET: ParkingSpots
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> IndexParkingPlace()
         {
             var parkingSpots = await _context.ParkingSpot
           .Include(p => p.Vehicle)
@@ -38,7 +38,7 @@ namespace lexicon_garage3.Web.Controllers
                 HourRate = p.HourRate,
             }).ToList();
 
-            return View(viewModels);
+            return View("Index", viewModels);
         }
 
 
