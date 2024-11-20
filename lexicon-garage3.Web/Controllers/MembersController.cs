@@ -75,27 +75,6 @@ namespace lexicon_garage3.Web.Controllers
             return View(viewModel);
         }
 
-        // GET: Members/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Members/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,PersonNumber,UserName")] Member member)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(member);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(member);
-        }
 
         // GET: Members/Edit/5
         public async Task<IActionResult> Edit(string id)
