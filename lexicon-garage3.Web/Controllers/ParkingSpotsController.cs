@@ -263,7 +263,7 @@ namespace lexicon_garage3.Web.Controllers
             {
                 TempData["ErrorMessage"] = "An error occurred while updating the parking spot availability.";
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexParkingPlace));
         }
 
         // GET: ParkingSpots/Statistic/5
