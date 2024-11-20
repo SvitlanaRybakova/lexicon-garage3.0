@@ -67,14 +67,7 @@ namespace lexicon_garage3.Web.Controllers
         // GET: ParkingSpots/Create
         public IActionResult Create()
         {
-            ViewData["Size"] = new SelectList(
-             Enum.GetValues(typeof(Size))
-            .Cast<Size>()
-            .Select(s => new { Value = (int)s, Text = s.ToString() }),
-        "Value",
-        "Text"
-    );
-            return View();
+            return View(new CreateParkingSpotsViewModel());
         }
 
         // POST: ParkingSpots/Create
@@ -145,13 +138,6 @@ namespace lexicon_garage3.Web.Controllers
 
             ViewData["RegNumber"] = new SelectList(_context.Set<Vehicle>(), "RegNumber", "RegNumber", parkingSpot.RegNumber);
 
-            ViewData["Size"] = new SelectList(
-                Enum.GetValues(typeof(Size))
-                    .Cast<Size>()
-                    .Select(s => new { Value = (int)s, Text = s.ToString() }),
-                "Value",
-                "Text"
-            );
 
             return View(viewModel);
         }

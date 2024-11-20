@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using lexicon_garage3.Core.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace lexicon_garage3.Web.Models.ViewModels.ParkingSpotsViewModels
 {
@@ -23,5 +25,25 @@ namespace lexicon_garage3.Web.Models.ViewModels.ParkingSpotsViewModels
 
         public bool IsAvailable { get; set; }
         public string? RegNumber { get; set; }
+
+        public IEnumerable<SelectListItem> Sizes { get; set; } = GetSizes();
+        private static IEnumerable<SelectListItem> GetSizes()
+        {
+            return Enum.GetValues(typeof(Size))
+                .Cast<Size>()
+                .Select(v =>
+                {
+                    var displayAttribute = v.GetType().GetField(v.ToString())
+                                            .GetCustomAttributes<DisplayAttribute>(false)
+                                            .FirstOrDefault();
+
+                    return new SelectListItem
+                    {
+                        Text = displayAttribute?.Name ?? v.ToString(),
+                        Value = v.ToString()
+                    };
+                })
+                .ToList();
+        }
     }
 }
