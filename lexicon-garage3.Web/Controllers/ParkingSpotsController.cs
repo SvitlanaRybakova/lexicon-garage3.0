@@ -38,6 +38,9 @@ namespace lexicon_garage3.Web.Controllers
                 HourRate = p.HourRate,
             }).ToList();
 
+          
+
+
             return View("Index", viewModels);
         }
 
@@ -283,6 +286,34 @@ namespace lexicon_garage3.Web.Controllers
             };
 
             return View(model);
+        }
+
+
+        public async Task<IActionResult> Search(SearchParkingSpotViewModel viewModel)
+        {
+            var parkingSpot = _context.ParkingSpot.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(viewModel.Size))
+            {
+                parkingSpot = parkingSpot.Where(m => m.Size.Contains(viewModel.Size));
+            }
+
+            if (viewModel.ParkingNumber > 0)
+            {
+                parkingSpot = parkingSpot.Where(m => m.ParkingNumber == viewModel.ParkingNumber);
+            }
+;
+
+            var viewModels = parkingSpot.Select(p => new IndexParkingSpotViewModel
+            {
+                Id = p.Id,
+                Size = p.Size,
+                ParkingNumber = p.ParkingNumber,
+                IsAvailable = p.IsAvailable,
+                HourRate = p.HourRate,
+            }).ToList();
+            
+            return View("Index", viewModels);
         }
 
     }

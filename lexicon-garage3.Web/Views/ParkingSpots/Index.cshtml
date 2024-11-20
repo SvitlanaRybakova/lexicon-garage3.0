@@ -9,6 +9,11 @@
 <p>
     <a asp-action="Create" class="btn btn-primary">Create Parking Place</a>
 </p>
+
+
+@Html.Partial("_FilterForm", new IndexParkingSpotViewModel())
+
+
 <table class="table">
     <thead>
         <tr>
