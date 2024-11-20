@@ -23,7 +23,7 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // GET: ParkingSpots
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> IndexParkingPlace()
         {
             var parkingSpots = await _context.ParkingSpot
           .Include(p => p.Vehicle)
@@ -38,7 +38,7 @@ namespace lexicon_garage3.Web.Controllers
                 HourRate = p.HourRate,
             }).ToList();
 
-            return View(viewModels);
+            return View("Index", viewModels);
         }
 
 
@@ -263,7 +263,26 @@ namespace lexicon_garage3.Web.Controllers
             {
                 TempData["ErrorMessage"] = "An error occurred while updating the parking spot availability.";
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexParkingPlace));
+        }
+
+        // GET: ParkingSpots/Statistic/5
+        public async Task<IActionResult> Statistic()
+        {
+            var parkingSpots = await _context.ParkingSpot.ToListAsync();
+
+            var totalSpots = parkingSpots.Count;
+            var availableSpots = parkingSpots.Count(ps => ps.IsAvailable);
+            var occupiedSpots = totalSpots - availableSpots;
+
+            var model = new ParkingStatisticsViewModel
+            {
+                TotalSpots = totalSpots,
+                AvailableSpots = availableSpots,
+                OccupiedSpots = occupiedSpots
+            };
+
+            return View(model);
         }
 
     }
