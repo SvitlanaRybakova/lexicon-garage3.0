@@ -20,9 +20,10 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // GET: Members
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> IndexMembers()
         {
-            return View(await _context.Member.ToListAsync());
+            var members = await _context.Member.ToListAsync();
+            return View("Index", members);
         }
 
         // GET: Members/Details/5
