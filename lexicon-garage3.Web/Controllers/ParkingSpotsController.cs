@@ -266,5 +266,24 @@ namespace lexicon_garage3.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: ParkingSpots/Statistic/5
+        public async Task<IActionResult> Statistic()
+        {
+            var parkingSpots = await _context.ParkingSpot.ToListAsync();
+
+            var totalSpots = parkingSpots.Count;
+            var availableSpots = parkingSpots.Count(ps => ps.IsAvailable);
+            var occupiedSpots = totalSpots - availableSpots;
+
+            var model = new ParkingStatisticsViewModel
+            {
+                TotalSpots = totalSpots,
+                AvailableSpots = availableSpots,
+                OccupiedSpots = occupiedSpots
+            };
+
+            return View(model);
+        }
+
     }
 }

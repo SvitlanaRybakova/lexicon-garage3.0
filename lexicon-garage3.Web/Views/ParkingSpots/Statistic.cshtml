@@ -1,0 +1,37 @@
+﻿@model ParkingStatisticsViewModel
+
+@{
+    ViewData["Title"] = "Parking Statistics";
+}
+
+<h1>Parking Statistics</h1>
+<hr />
+
+
+<div>
+   
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalSpots)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TotalSpots)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AvailableSpots)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AvailableSpots)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.OccupiedSpots)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OccupiedSpots)
+        </dd>
+       
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
