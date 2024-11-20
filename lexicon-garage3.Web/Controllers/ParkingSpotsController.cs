@@ -38,6 +38,9 @@ namespace lexicon_garage3.Web.Controllers
                 HourRate = p.HourRate,
             }).ToList();
 
+          
+
+
             return View("Index", viewModels);
         }
 
@@ -64,14 +67,7 @@ namespace lexicon_garage3.Web.Controllers
         // GET: ParkingSpots/Create
         public IActionResult Create()
         {
-            ViewData["Size"] = new SelectList(
-             Enum.GetValues(typeof(Size))
-            .Cast<Size>()
-            .Select(s => new { Value = (int)s, Text = s.ToString() }),
-        "Value",
-        "Text"
-    );
-            return View();
+            return View(new CreateParkingSpotsViewModel());
         }
 
         // POST: ParkingSpots/Create
@@ -142,13 +138,6 @@ namespace lexicon_garage3.Web.Controllers
 
             ViewData["RegNumber"] = new SelectList(_context.Set<Vehicle>(), "RegNumber", "RegNumber", parkingSpot.RegNumber);
 
-            ViewData["Size"] = new SelectList(
-                Enum.GetValues(typeof(Size))
-                    .Cast<Size>()
-                    .Select(s => new { Value = (int)s, Text = s.ToString() }),
-                "Value",
-                "Text"
-            );
 
             return View(viewModel);
         }
@@ -283,6 +272,34 @@ namespace lexicon_garage3.Web.Controllers
             };
 
             return View(model);
+        }
+
+
+        public async Task<IActionResult> Search(SearchParkingSpotViewModel viewModel)
+        {
+            var parkingSpots = _context.ParkingSpot.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(viewModel.Size))
+            {
+                parkingSpots = parkingSpots.Where(m => m.Size.Contains(viewModel.Size));
+            }
+
+            if (viewModel.ParkingNumber > 0)
+            {
+                parkingSpots = parkingSpots.Where(m => m.ParkingNumber == viewModel.ParkingNumber);
+            }
+;
+
+            var viewModels = parkingSpots.Select(p => new IndexParkingSpotViewModel
+            {
+                Id = p.Id,
+                Size = p.Size,
+                ParkingNumber = p.ParkingNumber,
+                IsAvailable = p.IsAvailable,
+                HourRate = p.HourRate,
+            }).ToList();
+            
+            return View("Index", viewModels);
         }
 
     }

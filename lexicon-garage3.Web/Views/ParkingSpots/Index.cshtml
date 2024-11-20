@@ -4,11 +4,16 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>All Parking Places</h1>
+<h1>All Parking Spaces</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Create Parking Place</a>
+    <a asp-action="Create" class="btn btn-primary">Create Parking Space</a>
 </p>
+
+
+@Html.Partial("_FilterForm", new IndexParkingSpotViewModel())
+
+
 <table class="table">
     <thead>
         <tr>
