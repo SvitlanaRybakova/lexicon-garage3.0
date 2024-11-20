@@ -22,19 +22,20 @@
                 @Html.DisplayNameFor(model => model.IsAvailable)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.HourRate) 
+                @Html.DisplayNameFor(model => model.HourRate)
             </th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Size)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ParkingNumber)
-            </td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Size)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ParkingNumber)
+                </td>
                 <td>
                     @if (item.IsAvailable)
                     {
@@ -45,15 +46,32 @@
                         <span class="iconamoon--unavailable-fill"></span>
                     }
                 </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HourRate) <span>SEK</span>
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+                <td>
+                    @Html.DisplayFor(modelItem => item.HourRate) <span>SEK</span>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <form asp-action="BookingToggle" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        @if (item.IsAvailable)
+                        {
+                            <button type="submit" class="btn btn-warning">
+                                <span>Unbook</span>
+                            </button>
+
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-success">
+                                <span>Book</span>
+                            </button>
+                        }
+
+                    </form>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

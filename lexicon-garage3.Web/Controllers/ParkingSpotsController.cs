@@ -238,5 +238,33 @@ namespace lexicon_garage3.Web.Controllers
         {
             return _context.ParkingSpot.Any(e => e.Id == id);
         }
+
+        // POST: ParkingSpots/BookingToggle/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BookingToggle(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var parkingSpot = await _context.ParkingSpot.FindAsync(id);
+            if (parkingSpot == null)
+            {
+                return NotFound();
+            }
+            parkingSpot.IsAvailable = !parkingSpot.IsAvailable;
+            try
+            {
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Parking spot availability updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "An error occurred while updating the parking spot availability.";
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
