@@ -1,4 +1,4 @@
-﻿@model lexicon_garage3.Core.Entities.ParkingSpot
+﻿@model EditParkingSpotViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -15,7 +15,8 @@
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Size" class="control-label"></label>
-                <input asp-for="Size" class="form-control" />
+                <select asp-for="Size" class="form-control" asp-items="Model.Sizes">
+                </select>
                 <span asp-validation-for="Size" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -35,7 +36,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="RegNumber" class="control-label"></label>
-                <select asp-for="RegNumber" class="form-control" asp-items="ViewBag.RegNumber"></select>
+                <select asp-for="RegNumber" class="form-control" asp-items="@(ViewData["RegNumber"] as SelectList)">
+                    <option value="">Select Vehicle</option>
+                </select>
                 <span asp-validation-for="RegNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -46,8 +49,11 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="IndexParkingPlace">Back to List</a>
 </div>
+
+
+@await Html.PartialAsync("_AlertMessages")
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

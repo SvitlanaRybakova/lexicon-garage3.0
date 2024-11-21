@@ -36,3 +36,20 @@ body {
     margin: auto;
 }
 
+.iconamoon--unavailable-fill {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23e15656' fill-rule='evenodd' d='M7.503 5.382a8 8 0 0 1 11.114 11.114zm-2.12 2.121a8 8 0 0 0 11.114 11.114zM12 2a9.97 9.97 0 0 0-7.071 2.929A9.97 9.97 0 0 0 2 12c0 5.523 4.477 10 10 10a9.97 9.97 0 0 0 7.071-2.929A9.97 9.97 0 0 0 22 12c0-5.523-4.477-10-10-10' clip-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+.fluent--presence-available-20-regular {
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%235e9b59' d='M9.995 0C4.475 0 0 4.475 0 9.995s4.475 9.996 9.995 9.996s9.996-4.475 9.996-9.996C19.99 4.475 15.516 0 9.995 0M2 9.995a7.995 7.995 0 1 1 15.99 0a7.995 7.995 0 0 1-15.99 0m12.207-3.202a1 1 0 0 1 0 1.414l-4.5 4.5a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.793-3.793a1 1 0 0 1 1.414 0'/%3E%3C/svg%3E");
+}
