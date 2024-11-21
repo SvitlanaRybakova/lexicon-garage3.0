@@ -28,16 +28,16 @@
                                asp-area="" asp-controller="ParkingSpots" asp-action="IndexParkingPlace">Parking Places</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active text-primary" : "text-dark")" 
-                            asp-area="" asp-controller="Home" asp-action="Privacy">All Vehicles</a>
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active text-primary" : "text-dark")"
+                               asp-area="" asp-controller="Vehicles" asp-action="Index">All Vehicles</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Privacy" ? "active text-primary" : "text-dark")" 
-                            asp-area="" asp-controller="Home" asp-action="Privacy">Members</a>
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active text-primary" : "text-dark")"
+                               asp-area="" asp-controller="Members" asp-action="Index">Members</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Privacy" ? "active text-primary" : "text-dark")" 
-                            asp-area="" asp-controller="Home" asp-action="Privacy">Vehicle Type</a>
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "VehcileTypeIndex" ? "active text-primary" : "text-dark")"
+                               asp-area="" asp-controller="VehicleTypes" asp-action="VehicleTypeIndex">Vehicle Type</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Statistic" ? "active text-primary" : "text-dark")"
