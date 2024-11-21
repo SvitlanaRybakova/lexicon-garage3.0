@@ -1,7 +1,6 @@
 ﻿using lexicon_garage3.Core.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
 
 namespace lexicon_garage3.Persistance.Data
 {
@@ -76,9 +75,9 @@ namespace lexicon_garage3.Persistance.Data
             );
 
         }
-        public DbSet<lexicon_garage3.Core.Entities.Member> Member { get; set; } = default!;
-        public DbSet<lexicon_garage3.Core.Entities.ParkingSpot> ParkingSpot { get; set; } = default!;
-        public DbSet<lexicon_garage3.Core.Entities.Vehicle> Vehicle { get; set; } = default!;
-        public DbSet<lexicon_garage3.Core.Entities.VehicleType> VehicleType { get; set; } = default!;
+        public DbSet<Member> Member { get; set; } = default!;
+        public DbSet<ParkingSpot> ParkingSpot { get; set; } = default!;
+        public DbSet<Vehicle> Vehicle { get; set; } = default!;
+        public DbSet<VehicleType> VehicleType { get; set; } = default!;
     }
 }
