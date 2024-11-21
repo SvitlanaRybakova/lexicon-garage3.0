@@ -27,6 +27,10 @@ namespace lexicon_garage3.Persistance.Data
              .HasForeignKey<ParkingSpot>(p => p.RegNumber)
              .IsRequired(false); // Make the foreign key optional
 
+            //vehicletype stores the enum name ("Small", "Medium", "Large") as a string
+            modelBuilder.Entity<VehicleType>()
+           .Property(v => v.VehicleSize)
+           .HasConversion<string>(); 
 
         }
         public DbSet<lexicon_garage3.Core.Entities.Member> Member { get; set; } = default!;

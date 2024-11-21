@@ -9,24 +9,29 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace lexicon_garage3.Web.Models.ViewModels
+namespace lexicon_garage3.Web.Models.ViewModels.VehicleTypeViewModels
 {
-    public class VehicleTypeViewModel
+    public class CreateVehicleTypeViewModel
     {
 
         public int Id { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Vehicle Type Name is required.")]
+        [StringLength(100)]
+        [Display(Name = "Vehicle Type Name")]
         public string VehicleTypeName { get; set; }
 
-        // public string VehicleSize { get; set; }
+        
 
-        [Required]
+        [Required(ErrorMessage = "Number of wheel is required.")]
+        [Range(1, 30, ErrorMessage = "Number of wheels must be a positive integer.")]
+        [Display(Name = "Number of wheels")]
         public int NumOfWheels { get; set; }
 
         [Required]
-        public string SelectedVehicleSize { get; set; } // enum value
+        public Size SelectedVehicleSize { get; set; } // enum value
 
-        
+
         //public IEnumerable<SelectListItem> VehicleTypeSizes { get; set; } // dropdown list
         public List<SelectListItem> VehicleTypeSizes { get; set; } = new List<SelectListItem>(); // Initialize to avoid null errors
 
