@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using lexicon_garage3.Persistance.Data;
 
@@ -11,9 +12,11 @@ using lexicon_garage3.Persistance.Data;
 namespace lexicon_garage3.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241121164847_PersonNumber_string")]
+    partial class PersonNumber_string
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -247,7 +250,6 @@ namespace lexicon_garage3.Persistance.Migrations
 
                     b.HasKey("Id");
 
-
                     b.ToTable("Member");
 
                     b.HasData(
@@ -317,7 +319,6 @@ namespace lexicon_garage3.Persistance.Migrations
                             RegNumber = "BIKE001",
                             Size = "Small"
                         });
-
                 });
 
             modelBuilder.Entity("lexicon_garage3.Core.Entities.Vehicle", b =>
@@ -355,7 +356,6 @@ namespace lexicon_garage3.Persistance.Migrations
 
                     b.HasIndex("VehicleTypeId");
 
-
                     b.ToTable("Vehicle");
 
                     b.HasData(
@@ -379,7 +379,6 @@ namespace lexicon_garage3.Persistance.Migrations
                             Model = "MT-15",
                             VehicleTypeId = 2
                         });
-
                 });
 
             modelBuilder.Entity("lexicon_garage3.Core.Entities.VehicleType", b =>
@@ -402,7 +401,6 @@ namespace lexicon_garage3.Persistance.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
 
                     b.ToTable("VehicleType");
 

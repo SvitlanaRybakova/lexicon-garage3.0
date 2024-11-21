@@ -41,8 +41,8 @@ namespace lexicon_garage3.Persistance.Data
 
             
             modelBuilder.Entity<Member>().HasData(
-                new Member { Id = "M001", FirstName = "Anna", LastName = "Darke", PersonNumber = 123456, UserName = "annadark" },
-                new Member { Id = "M002", FirstName = "Jane", LastName = "Austin", PersonNumber = 654321, UserName = "janeaustin" }
+                new Member { Id = "M001", FirstName = "Anna", LastName = "Darke", PersonNumber = "19870324", UserName = "annadark" },
+                new Member { Id = "M002", FirstName = "Jane", LastName = "Austin", PersonNumber = "19960712", UserName = "janeaustin" }
             );
 
           
