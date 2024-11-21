@@ -16,12 +16,20 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // GET: Members
-        public async Task<IActionResult> IndexMembers()
+        public async Task<IActionResult> IndexMembers(string searchTerm)
         {
-            var members = _context.Member
-             .Include(m => m.Vehicles)
-             .ThenInclude(v => v.ParkingSpot)
-             .ToList();
+ 
+            var query = _context.Member
+                .Include(m => m.Vehicles)
+                .ThenInclude(v => v.ParkingSpot)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(m => m.FirstName.Contains(searchTerm) || m.LastName.Contains(searchTerm));
+            }
+
+            var members = await query.ToListAsync();
 
             var memberViewModels = members.Select(m => new IndexMemberViewModel
             {
@@ -31,7 +39,14 @@ namespace lexicon_garage3.Web.Controllers
                 TotalParkingCost = m.Vehicles.Sum(v => CalculateParkingCost(v.ParkingSpot, v.ArrivalTime, v.CheckoutTime))
             }).ToList();
 
-            return View("Index", memberViewModels);
+            
+            var viewModel = new IndexMemberViewModel
+            {
+                SearchTerm = searchTerm,
+                Members = memberViewModels
+            };
+
+            return View("Index", viewModel);
         }
 
 

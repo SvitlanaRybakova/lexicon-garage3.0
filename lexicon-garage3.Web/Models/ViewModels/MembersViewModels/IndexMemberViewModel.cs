@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using lexicon_garage3.Core.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace lexicon_garage3.Web.Models.ViewModels.MembersViewModels
 {
@@ -14,5 +15,9 @@ namespace lexicon_garage3.Web.Models.ViewModels.MembersViewModels
 
         [Display(Name = "Total Parkkng Cost")]
         public decimal TotalParkingCost { get; set; } = 0;
+
+        public string SearchTerm { get; set; }
+
+        public IEnumerable<IndexMemberViewModel> Members { get; set; } = new List<IndexMemberViewModel>();
     }
 }
