@@ -246,7 +246,7 @@ namespace lexicon_garage3.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Member");
+                    b.ToTable("Member", (string)null);
                 });
 
             modelBuilder.Entity("lexicon_garage3.Core.Entities.ParkingSpot", b =>
@@ -276,7 +276,7 @@ namespace lexicon_garage3.Persistance.Migrations
                         .IsUnique()
                         .HasFilter("[RegNumber] IS NOT NULL");
 
-                    b.ToTable("ParkingSpot");
+                    b.ToTable("ParkingSpot", (string)null);
                 });
 
             modelBuilder.Entity("lexicon_garage3.Core.Entities.Vehicle", b =>
@@ -314,7 +314,7 @@ namespace lexicon_garage3.Persistance.Migrations
 
                     b.HasIndex("VehicleTypeId");
 
-                    b.ToTable("Vehicle");
+                    b.ToTable("Vehicle", (string)null);
                 });
 
             modelBuilder.Entity("lexicon_garage3.Core.Entities.VehicleType", b =>
@@ -338,7 +338,7 @@ namespace lexicon_garage3.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("VehicleType");
+                    b.ToTable("VehicleType", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
