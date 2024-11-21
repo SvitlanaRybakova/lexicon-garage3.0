@@ -36,8 +36,8 @@
                                asp-area="" asp-controller="Members" asp-action="Index">Members</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "VehicleTypes" ? "active text-primary" : "text-dark")"
-                               asp-area="" asp-controller="VehicleTypes" asp-action="Index">Vehicle Type</a>
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "VehicleTypeIndex" ? "active text-primary" : "text-dark")"
+                               asp-area="" asp-controller="VehicleTypes" asp-action="VehicleTypeIndex">Vehicle Type</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Statistic" ? "active text-primary" : "text-dark")"
