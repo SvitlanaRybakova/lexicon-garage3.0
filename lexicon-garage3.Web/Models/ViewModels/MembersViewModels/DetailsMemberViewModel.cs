@@ -5,7 +5,7 @@
         public string Id { get; set; }
         public string FullName { get; set; }
         public string UserName { get; set; }
-        public int PersonNumber { get; set; }
+        public string PersonNumber { get; set; }
         public List<VehicleDetailsViewModel> Vehicles { get; set; }
     }
 

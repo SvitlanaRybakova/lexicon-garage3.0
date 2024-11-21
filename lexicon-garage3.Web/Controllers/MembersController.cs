@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
+using Newtonsoft.Json.Linq;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace lexicon_garage3.Web.Controllers
 {
