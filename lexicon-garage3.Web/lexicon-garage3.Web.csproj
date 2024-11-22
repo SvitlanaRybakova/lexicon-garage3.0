@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,6 +7,10 @@
     <UserSecretsId>aspnet-lexicon_garage3.Web-f48516bf-00b1-4c23-98c5-bec48e1e5997</UserSecretsId>
     <RootNamespace>lexicon_garage3.Web</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\MembersController.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\Images\11.jpg" />

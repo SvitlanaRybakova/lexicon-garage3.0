@@ -1,10 +1,11 @@
 ﻿using lexicon_garage3.Core.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace lexicon_garage3.Persistance.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<Member, IdentityRole, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -39,10 +40,10 @@ namespace lexicon_garage3.Persistance.Data
             );
 
             
-            modelBuilder.Entity<Member>().HasData(
-                new Member { Id = "M001", FirstName = "Anna", LastName = "Darke", PersonNumber = "19870324", UserName = "annadark" },
-                new Member { Id = "M002", FirstName = "Jane", LastName = "Austin", PersonNumber = "19960712", UserName = "janeaustin" }
-            );
+            //modelBuilder.Entity<Member>().HasData(
+            //    new Member { Id = "M001", FirstName = "Anna", LastName = "Darke", PersonNumber = "19870324", UserName = "annadark" },
+            //    new Member { Id = "M002", FirstName = "Jane", LastName = "Austin", PersonNumber = "19960712", UserName = "janeaustin" }
+            //);
 
           
             modelBuilder.Entity<ParkingSpot>().HasData(
