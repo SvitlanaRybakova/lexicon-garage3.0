@@ -11,6 +11,7 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using lexicon_garage3.Core.Entities;
+using lexicon_garage3.Web.Validation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -71,6 +72,24 @@ namespace lexicon_garage3.Web.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+
+            [Required]
+            [DataType(DataType.Text)]
+            [StringLength(12, ErrorMessage = "The {0} must be exactly {1} characters long.", MinimumLength = 12)]
+            [PersonNumberValidation(ErrorMessage = "Correct format is YYYYMMDDXXXX")]
+            [Display(Name = "Personal Number")]
+            public string PersonNumber { get; set; }
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -115,6 +134,10 @@ namespace lexicon_garage3.Web.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+                user.PersonNumber = Input.PersonNumber;
+
                 await _userStore.SetUserNameAsync((Member)user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync((Member)user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync((Member)user, Input.Password);
@@ -155,11 +178,13 @@ namespace lexicon_garage3.Web.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private IdentityUser CreateUser()
+        private Member CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<Member>();
+                var user = Activator.CreateInstance<Member>();
+                user.Id = Guid.NewGuid().ToString(); 
+                return user;
             }
             catch
             {

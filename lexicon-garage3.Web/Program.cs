@@ -21,7 +21,6 @@ namespace lexicon_garage3.Web
             builder.Services.AddDefaultIdentity<Member>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-          
 
             builder.Services.AddControllersWithViews();
 
