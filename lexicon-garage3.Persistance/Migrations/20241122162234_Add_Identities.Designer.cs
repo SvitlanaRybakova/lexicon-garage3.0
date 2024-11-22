@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using lexicon_garage3.Persistance.Data;
 
@@ -11,9 +12,11 @@ using lexicon_garage3.Persistance.Data;
 namespace lexicon_garage3.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241122162234_Add_Identities")]
+    partial class Add_Identities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -265,26 +268,6 @@ namespace lexicon_garage3.Persistance.Migrations
                         .HasFilter("[RegNumber] IS NOT NULL");
 
                     b.ToTable("ParkingSpot");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "P001",
-                            HourRate = 10,
-                            IsAvailable = true,
-                            ParkingNumber = 1,
-                            RegNumber = "CAR001",
-                            Size = "Medium"
-                        },
-                        new
-                        {
-                            Id = "P002",
-                            HourRate = 15,
-                            IsAvailable = true,
-                            ParkingNumber = 2,
-                            RegNumber = "BIKE001",
-                            Size = "Small"
-                        });
                 });
 
             modelBuilder.Entity("lexicon_garage3.Core.Entities.Vehicle", b =>
@@ -323,28 +306,6 @@ namespace lexicon_garage3.Persistance.Migrations
                     b.HasIndex("VehicleTypeId");
 
                     b.ToTable("Vehicle");
-
-                    b.HasData(
-                        new
-                        {
-                            RegNumber = "CAR001",
-                            ArrivalTime = new DateTime(2024, 11, 22, 16, 17, 30, 209, DateTimeKind.Local).AddTicks(2693),
-                            Brand = "Toyota",
-                            CheckoutTime = new DateTime(2024, 11, 22, 20, 17, 30, 209, DateTimeKind.Local).AddTicks(2739),
-                            Color = "Red",
-                            Model = "Corolla",
-                            VehicleTypeId = 1
-                        },
-                        new
-                        {
-                            RegNumber = "BIKE001",
-                            ArrivalTime = new DateTime(2024, 11, 22, 17, 17, 30, 209, DateTimeKind.Local).AddTicks(2742),
-                            Brand = "Yamaha",
-                            CheckoutTime = new DateTime(2024, 11, 22, 21, 17, 30, 209, DateTimeKind.Local).AddTicks(2744),
-                            Color = "Black",
-                            Model = "MT-15",
-                            VehicleTypeId = 2
-                        });
                 });
 
             modelBuilder.Entity("lexicon_garage3.Core.Entities.VehicleType", b =>
@@ -369,29 +330,6 @@ namespace lexicon_garage3.Persistance.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("VehicleType");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            NumOfWheels = 4,
-                            VehicleSize = "Medium",
-                            VehicleTypeName = "Car"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            NumOfWheels = 2,
-                            VehicleSize = "Small",
-                            VehicleTypeName = "Motorcycle"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            NumOfWheels = 6,
-                            VehicleSize = "Large",
-                            VehicleTypeName = "Truck"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

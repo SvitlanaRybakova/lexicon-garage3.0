@@ -143,7 +143,7 @@ namespace lexicon_garage3.Web.Controllers
                     }
                     member.FirstName = model.FirstName;
                     member.LastName = model.LastName;
-                    member.UserName = model.UserName;
+                    //member.UserName = model.UserName;
                     member.PersonNumber = model.PersonNumber;
 
                     _context.Update(member);
