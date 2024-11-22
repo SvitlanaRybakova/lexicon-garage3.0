@@ -85,7 +85,7 @@ namespace lexicon_garage3.Web.Controllers
                 _context.Add(vehicle);
 
                 //set owner of vehicle to the first user in the database, this should be instead the logged in user when you can log in
-                var member = await _context.Member.FirstAsync(m => m.Id == "1");//TODO:change "1" to logged in user id
+                var member = await _context.Member.FirstAsync();//TODO:change to logged in user id
                 member.Vehicles.Add(vehicle);
 
                 //set the parking spot
@@ -95,14 +95,34 @@ namespace lexicon_garage3.Web.Controllers
                 parkingSpot.Vehicle = vehicle;
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ParkingReceipt), new { regNumber = vehicle.RegNumber });
             }
 
             ViewData["VehicleTypeId"] =
                 new SelectList(_context.Set<VehicleType>(), "Id", "VehicleSize", viewModel.VehicleTypeId);
             return View(viewModel);
         }
+        // GET: Vehicles/ParkingReceipt
+        public async Task<IActionResult> ParkingReceipt(string regNumber)
+        {
+            var vehicle = await _context.Vehicle
+                .Include(v => v.VehicleType)
+                .Include(v => v.ParkingSpot)
+                .FirstAsync(v => v.RegNumber == regNumber);
 
+            var parkingReceiptViewModel = new ParkingReceiptViewModel()
+            {
+                RegNumber = vehicle.RegNumber,
+                Brand = vehicle.Brand,
+                Model = vehicle.Model,
+                Color = vehicle.Color,
+                ArrivalTime = vehicle.ArrivalTime,
+                CheckoutTime = vehicle.CheckoutTime,
+                VehicleType = vehicle.VehicleType,
+                ParkingSpot = vehicle.ParkingSpot
+            };
+            return View(parkingReceiptViewModel);
+        }
         // GET: Vehicles/Edit/5
         public async Task<IActionResult> Edit(string id)
         {

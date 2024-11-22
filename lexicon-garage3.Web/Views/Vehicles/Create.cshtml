@@ -53,4 +53,10 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        // get the form and add a confirmation dialog on submit
+        document.querySelector("[action='/Vehicles/Create']").onsubmit = function () {
+            return confirm("Are you sure you want to park this vehicle?");
+        };
+    </script>
 }
