@@ -28,15 +28,15 @@
                                asp-area="" asp-controller="ParkingSpots" asp-action="IndexParkingPlace">Parking Places</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active text-primary" : "text-dark")"
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Vehicles" ? "active text-primary" : "text-dark")"
                                asp-area="" asp-controller="Vehicles" asp-action="Index">All Vehicles</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active text-primary" : "text-dark")"
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Members" ? "active text-primary" : "text-dark")"
                                asp-area="" asp-controller="Members" asp-action="Index">Members</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "VehcileTypeIndex" ? "active text-primary" : "text-dark")"
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "VehicleTypeIndex" ? "active text-primary" : "text-dark")"
                                asp-area="" asp-controller="VehicleTypes" asp-action="VehicleTypeIndex">Vehicle Type</a>
                         </li>
                         <li class="nav-item">
