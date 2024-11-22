@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿C
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
 using lexicon_garage3.Web.Models.ViewModels.MembersViewModels;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace lexicon_garage3.Web.Controllers
@@ -10,10 +12,12 @@ namespace lexicon_garage3.Web.Controllers
     public class MembersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Member> _userManager;
 
-        public MembersController(ApplicationDbContext context)
+        public MembersController(ApplicationDbContext context, UserManager<Member> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Members
