@@ -16,6 +16,7 @@ namespace lexicon_garage3.Web.Models.ViewModels.MembersViewModels
 
         [Display(Name = "Personal Number")]
         [PersonNumberValidation(ErrorMessage = "Correct format is YYYYMMDDXXXX")]
+        [MinimumAgeValidation(18,ErrorMessage = "Person must be at least 18 years old to park a vehicle.")]
         public string PersonNumber { get; set; }
 
         [Display(Name = "User Name")]
