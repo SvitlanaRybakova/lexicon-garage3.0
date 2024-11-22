@@ -50,7 +50,11 @@ namespace lexicon_garage3.Web.Controllers
         public IActionResult Create()
         {
             ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "Id", "VehicleSize");
-            var parkingSpots = _context.Set<ParkingSpot>().Where(p => p.IsAvailable);
+            var parkingSpots = _context.Set<ParkingSpot>()
+                .Where(p => p.IsAvailable);
+                //.Where(p = p.Size == vehicleType.Size) something like this? but we dont have vehicletype yet
+            // we need to filter on size also, but the size comes from vehicle type which is selected in the view after this is created
+            // i don't know how to do this
             ViewData["ParkingSpotId"] = new SelectList(parkingSpots,"Id", "ParkingNumber");
             return View(new CreateVehicleViewModel());
         }
@@ -67,6 +71,7 @@ namespace lexicon_garage3.Web.Controllers
                 var vehicleType = await _context.VehicleType
                     .FirstOrDefaultAsync(m => m.Id == viewModel.VehicleTypeId);
 
+                //make the Vehicle class from the viewmodel data etc
                 var vehicle = new Vehicle
                 {
                     RegNumber = viewModel.RegNumber,
@@ -79,9 +84,11 @@ namespace lexicon_garage3.Web.Controllers
                 };
                 _context.Add(vehicle);
 
+                //set owner of vehicle to the first user in the database, this should be instead the logged in user when you can log in
                 var member = await _context.Member.FirstAsync(m => m.Id == "1");//TODO:change "1" to logged in user id
                 member.Vehicles.Add(vehicle);
 
+                //set the parking spot
                 var parkingSpot = await _context.ParkingSpot.FirstAsync(p => p.Id == viewModel.ParkingSpotId);
                 parkingSpot.RegNumber = viewModel.RegNumber;
                 parkingSpot.IsAvailable = false;

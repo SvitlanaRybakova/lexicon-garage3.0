@@ -9,7 +9,7 @@ public class CreateVehicleViewModel
     public string RegNumber { get; set; }
 
     [Required(ErrorMessage = "Color is required.")]
-    [Display(Name = "Parking Number")]
+    [Display(Name = "Color")]
     public string Color { get; set; }
 
     [Required(ErrorMessage = " Vehicle brand is required.")]
