@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using lexicon_garage3.Persistance.Data;
 
@@ -11,9 +12,11 @@ using lexicon_garage3.Persistance.Data;
 namespace lexicon_garage3.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241120194917_SeedData")]
+    partial class SeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,16 +240,14 @@ namespace lexicon_garage3.Persistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PersonNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PersonNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
 
                     b.ToTable("Member");
 
@@ -256,7 +257,7 @@ namespace lexicon_garage3.Persistance.Migrations
                             Id = "M001",
                             FirstName = "Anna",
                             LastName = "Darke",
-                            PersonNumber = "19870324",
+                            PersonNumber = 123456,
                             UserName = "annadark"
                         },
                         new
@@ -264,7 +265,7 @@ namespace lexicon_garage3.Persistance.Migrations
                             Id = "M002",
                             FirstName = "Jane",
                             LastName = "Austin",
-                            PersonNumber = "19960712",
+                            PersonNumber = 654321,
                             UserName = "janeaustin"
                         });
                 });
@@ -317,7 +318,6 @@ namespace lexicon_garage3.Persistance.Migrations
                             RegNumber = "BIKE001",
                             Size = "Small"
                         });
-
                 });
 
             modelBuilder.Entity("lexicon_garage3.Core.Entities.Vehicle", b =>
@@ -355,16 +355,15 @@ namespace lexicon_garage3.Persistance.Migrations
 
                     b.HasIndex("VehicleTypeId");
 
-
                     b.ToTable("Vehicle");
 
                     b.HasData(
                         new
                         {
                             RegNumber = "CAR001",
-                            ArrivalTime = new DateTime(2024, 11, 21, 15, 48, 46, 441, DateTimeKind.Local).AddTicks(1929),
+                            ArrivalTime = new DateTime(2024, 11, 20, 18, 49, 16, 97, DateTimeKind.Local).AddTicks(5173),
                             Brand = "Toyota",
-                            CheckoutTime = new DateTime(2024, 11, 21, 19, 48, 46, 441, DateTimeKind.Local).AddTicks(1977),
+                            CheckoutTime = new DateTime(2024, 11, 20, 22, 49, 16, 97, DateTimeKind.Local).AddTicks(5255),
                             Color = "Red",
                             Model = "Corolla",
                             VehicleTypeId = 1
@@ -372,14 +371,13 @@ namespace lexicon_garage3.Persistance.Migrations
                         new
                         {
                             RegNumber = "BIKE001",
-                            ArrivalTime = new DateTime(2024, 11, 21, 16, 48, 46, 441, DateTimeKind.Local).AddTicks(1981),
+                            ArrivalTime = new DateTime(2024, 11, 20, 19, 49, 16, 97, DateTimeKind.Local).AddTicks(5267),
                             Brand = "Yamaha",
-                            CheckoutTime = new DateTime(2024, 11, 21, 20, 48, 46, 441, DateTimeKind.Local).AddTicks(1983),
+                            CheckoutTime = new DateTime(2024, 11, 20, 23, 49, 16, 97, DateTimeKind.Local).AddTicks(5272),
                             Color = "Black",
                             Model = "MT-15",
                             VehicleTypeId = 2
                         });
-
                 });
 
             modelBuilder.Entity("lexicon_garage3.Core.Entities.VehicleType", b =>
@@ -402,7 +400,6 @@ namespace lexicon_garage3.Persistance.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
 
                     b.ToTable("VehicleType");
 

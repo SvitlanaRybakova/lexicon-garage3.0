@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
+
 
 namespace lexicon_garage3.Web.Controllers
 {
@@ -20,50 +16,76 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // GET: Members
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> IndexMembers(string searchTerm)
         {
-            return View(await _context.Member.ToListAsync());
+ 
+            var query = _context.Member
+                .Include(m => m.Vehicles)
+                .ThenInclude(v => v.ParkingSpot)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(m => m.FirstName.Contains(searchTerm) || m.LastName.Contains(searchTerm));
+            }
+
+            var members = await query.ToListAsync();
+
+            var memberViewModels = members.Select(m => new IndexMemberViewModel
+            {
+                Id = m.Id,
+                FullName = $"{m.FirstName} {m.LastName}",
+                VehicleCount = m.Vehicles.Count,
+                TotalParkingCost = m.Vehicles.Sum(v => CalculateParkingCost(v.ParkingSpot, v.ArrivalTime, v.CheckoutTime))
+            }).ToList();
+
+            
+            var viewModel = new IndexMemberViewModel
+            {
+                SearchTerm = searchTerm,
+                Members = memberViewModels
+            };
+
+            return View("Index", viewModel);
         }
+
 
         // GET: Members/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var member = _context.Member
+         .Include(m => m.Vehicles)
+         .ThenInclude(v => v.ParkingSpot)
+         .FirstOrDefault(m => m.Id == id);
 
-            var member = await _context.Member
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (member == null)
             {
                 return NotFound();
             }
 
-            return View(member);
-        }
-
-        // GET: Members/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Members/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,PersonNumber,UserName")] Member member)
-        {
-            if (ModelState.IsValid)
+            var viewModel = new DetailsMemberViewModel
             {
-                _context.Add(member);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(member);
+                Id = member.Id,
+                FullName = $"{member.FirstName} {member.LastName}",
+                UserName = member.UserName,
+                PersonNumber = member.PersonNumber,
+                Vehicles = member.Vehicles.Select(v => new VehicleDetailsViewModel
+                {
+                    RegNumber = v.RegNumber,
+                    Brand = v.Brand,
+                    Model = v.Model,
+                    Color = v.Color,
+                    ArrivalTime = v.ArrivalTime,
+                    CheckoutTime = v.CheckoutTime,
+                    ParkingCost = CalculateParkingCost(v.ParkingSpot, v.ArrivalTime, v.CheckoutTime),
+                    ParkingSpotName = v.ParkingSpot?.RegNumber,
+                    CostPerHour = v.ParkingSpot?.HourRate ?? 0
+                }).ToList()
+            };
+
+            return View(viewModel);
         }
+
 
         // GET: Members/Edit/5
         public async Task<IActionResult> Edit(string id)
@@ -78,7 +100,16 @@ namespace lexicon_garage3.Web.Controllers
             {
                 return NotFound();
             }
-            return View(member);
+
+            var model = new EditMemberViewModel
+            {
+                Id = member.Id,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                UserName = member.UserName,
+                PersonNumber = member.PersonNumber
+            };
+            return View(model);
         }
 
         // POST: Members/Edit/5
@@ -86,9 +117,9 @@ namespace lexicon_garage3.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,FirstName,LastName,PersonNumber,UserName")] Member member)
+        public async Task<IActionResult> Edit(string id, EditMemberViewModel model)
         {
-            if (id != member.Id)
+            if (id != model.Id)
             {
                 return NotFound();
             }
@@ -97,23 +128,31 @@ namespace lexicon_garage3.Web.Controllers
             {
                 try
                 {
-                    _context.Update(member);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MemberExists(member.Id))
+                    var member = await _context.Member
+                        .FirstOrDefaultAsync(m => m.Id == model.Id);
+
+                    if (member == null)
                     {
+                        TempData["ErrorMessage"] = "Member not found.";
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+                    member.FirstName = model.FirstName;
+                    member.LastName = model.LastName;
+                    member.UserName = model.UserName;
+                    member.PersonNumber = model.PersonNumber;
+
+                    _context.Update(member);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "The data updated successfully!";
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception)
+                {
+                    TempData["ErrorMessage"] = "An error occurred while updating the member.";
+                    return View(model);
+                }
             }
-            return View(member);
+            return View(model);// in case not passing validation
         }
 
         // GET: Members/Delete/5
@@ -146,12 +185,20 @@ namespace lexicon_garage3.Web.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexMembers));
         }
 
         private bool MemberExists(string id)
         {
             return _context.Member.Any(e => e.Id == id);
+        }
+
+        private decimal CalculateParkingCost(ParkingSpot parkingSpot, DateTime arrivalTime, DateTime checkoutTime)
+        {
+            var parkingDuration = checkoutTime - arrivalTime;
+            var hoursParked = (decimal)parkingDuration.TotalHours;
+
+            return hoursParked * (parkingSpot?.HourRate ?? 0); 
         }
     }
 }

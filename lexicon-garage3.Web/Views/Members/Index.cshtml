@@ -1,47 +1,49 @@
-﻿@model IEnumerable<lexicon_garage3.Core.Entities.Member>
+﻿@model IndexMemberViewModel
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>All Members</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<form method="get" asp-action="IndexMembers" class="d-flex align-items-center gap-4 my-5">
+    
+    
+        <input type="text" id="SearchTerm" name="searchTerm" class="form-control" value="@Model.SearchTerm" placeholder="Enter member name" />
+
+    <button type="submit" class="btn btn-primary">Search</button>
+  
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                @Html.DisplayNameFor(model => model.FullName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                @Html.DisplayNameFor(model => model.VehicleCount)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PersonNumber)
+                @Html.DisplayNameFor(model => model.TotalParkingCost)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserName)
-            </th>
+            
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Members) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
+                @Html.DisplayFor(modelItem => item.FullName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LastName)
+                @Html.DisplayFor(modelItem => item.VehicleCount)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PersonNumber)
+                    @item.TotalParkingCost.ToString("0") <span>SEK</span>
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
+          
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
