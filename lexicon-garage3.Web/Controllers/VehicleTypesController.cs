@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
-using lexicon_garage3.Web.Models.ViewModels;
+using lexicon_garage3.Web.Models.ViewModels.VehicleTypeViewModels;
 
 
 namespace lexicon_garage3.Web.Controllers
@@ -20,7 +20,19 @@ namespace lexicon_garage3.Web.Controllers
         // GET: VehicleTypes
         public async Task<IActionResult> VehicleTypeIndex()
         {
-            return View(await _context.VehicleType.ToListAsync());
+            
+            var vehicleType = await _context.VehicleType.ToListAsync();
+
+            var viewModel = vehicleType.Select(p => new IndexVechicleTypeViewModel
+            {   
+                Id = p.Id,
+                VehicleTypeName = p.VehicleTypeName,
+                VehicleSize = p.VehicleSize,
+                NumOfWheels = p.NumOfWheels
+
+            });
+
+            return View(viewModel);
         }
 
         // GET: VehicleTypes/Details/5
@@ -44,10 +56,10 @@ namespace lexicon_garage3.Web.Controllers
         // GET: VehicleTypes/Create ** Populate the drop down list values for creation
         public IActionResult Create()
         {
-            var model = new VehicleTypeViewModel
+            var model = new CreateVehicleTypeViewModel
             {
-                VehicleTypeSizes = Enum.GetValues(typeof(VehicleTypeSize))
-                                   .Cast<VehicleTypeSize>()
+                VehicleTypeSizes = Enum.GetValues(typeof(Size))
+                                   .Cast<Size>()
                                    .Select(v => new SelectListItem
                                    {
                                        Text = v.ToString(),
@@ -65,7 +77,7 @@ namespace lexicon_garage3.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,VehicleTypeName,SelectedVehicleSize,NumOfWheels")] VehicleTypeViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Id,VehicleTypeName,SelectedVehicleSize,NumOfWheels")] CreateVehicleTypeViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +85,7 @@ namespace lexicon_garage3.Web.Controllers
                 {
                     //Id = viewModel.Id,
                     VehicleTypeName = viewModel.VehicleTypeName,
-                    VehicleSize = viewModel.SelectedVehicleSize,
+                    VehicleSize = viewModel.SelectedVehicleSize.ToString(),
                     NumOfWheels = viewModel.NumOfWheels
                     
                 };
@@ -89,8 +101,8 @@ namespace lexicon_garage3.Web.Controllers
                 Console.WriteLine(error); 
             }
 
-            viewModel.VehicleTypeSizes = Enum.GetValues(typeof(VehicleTypeSize))// repopulate the dropdown list if the creation fails
-                                .Cast<VehicleTypeSize>()
+            viewModel.VehicleTypeSizes = Enum.GetValues(typeof(Size))// repopulate the dropdown list if the creation fails
+                                .Cast<Size>()
                                 .Select(v => new SelectListItem
                                 {
                                     Text = v.ToString(),
@@ -114,7 +126,24 @@ namespace lexicon_garage3.Web.Controllers
             {
                 return NotFound();
             }
-            return View(vehicleType);
+
+            var viewModel = new EditVehicleTypeViewModel
+            {
+                Id = vehicleType.Id,
+                VehicleTypeName = vehicleType.VehicleTypeName,
+                NumOfWheels = vehicleType.NumOfWheels,
+                SelectedVehicleSize = Enum.Parse<Size>(vehicleType.VehicleSize),
+                VehicleTypeSizes = Enum.GetValues(typeof(Size))
+                                   .Cast<Size>()
+                                   .Select(size => new SelectListItem
+                                   {
+                                       Value = size.ToString(),
+                                       Text = size.ToString(),
+                                       Selected = size.ToString() == vehicleType.VehicleSize
+                                   }).ToList()
+            };
+
+            return View(viewModel);
         }
 
         // POST: VehicleTypes/Edit/5
@@ -122,23 +151,35 @@ namespace lexicon_garage3.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,VehicleTypeName,VehicleSize,NumOfWheels")] VehicleType vehicleType)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,VehicleTypeName,SelectedVehicleSize,NumOfWheels")] EditVehicleTypeViewModel editVehicleTypeView)
         {
-            if (id != vehicleType.Id)
+            if (id != editVehicleTypeView.Id)
             {
                 return NotFound();
             }
+            
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(vehicleType);
+
+                    var vehicleTypeModel = await _context.VehicleType.FindAsync(editVehicleTypeView.Id);
+                    if (vehicleTypeModel == null)
+                    {
+                        return NotFound();
+                    }
+
+                    vehicleTypeModel.VehicleTypeName = editVehicleTypeView.VehicleTypeName;
+                    vehicleTypeModel.VehicleSize = editVehicleTypeView.SelectedVehicleSize.ToString();
+                    vehicleTypeModel.NumOfWheels = editVehicleTypeView.NumOfWheels;
+
+                    _context.Update(vehicleTypeModel);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VehicleTypeExists(vehicleType.Id))
+                    if (!VehicleTypeExists(editVehicleTypeView.Id))
                     {
                         return NotFound();
                     }
@@ -147,9 +188,9 @@ namespace lexicon_garage3.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(VehicleTypeIndex));
             }
-            return View(vehicleType);
+            return View(editVehicleTypeView);
         }
 
         // GET: VehicleTypes/Delete/5
@@ -182,7 +223,7 @@ namespace lexicon_garage3.Web.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(VehicleTypeIndex));
         }
 
         private bool VehicleTypeExists(int id)
