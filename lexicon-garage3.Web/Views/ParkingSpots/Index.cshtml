@@ -44,11 +44,11 @@
                 <td>
                     @if (item.IsAvailable)
                     {
-                        <span class="iconamoon--unavailable-fill"></span>
+                        <span class="fluent--presence-available-20-regular"></span>
                     }
                     else
                     {
-                        <span class="fluent--presence-available-20-regular"></span>
+                        <span class="iconamoon--unavailable-fill"></span>
                     }
                 </td>
                 <td>
@@ -62,15 +62,15 @@
                         <input type="hidden" name="id" value="@item.Id" />
                         @if (item.IsAvailable)
                         {
-                            <button type="submit" class="btn btn-warning">
-                                <span>Unbook</span>
+                            <button type="submit" class="btn btn-success">
+                                <span>book</span>
                             </button>
 
                         }
                         else
                         {
-                            <button type="submit" class="btn btn-success">
-                                <span>Book</span>
+                            <button type="submit" class="btn btn-warning">
+                                <span>Unbook</span>
                             </button>
                         }
 

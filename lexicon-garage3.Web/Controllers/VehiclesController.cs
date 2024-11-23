@@ -49,12 +49,10 @@ namespace lexicon_garage3.Web.Controllers
         // GET: Vehicles/Create
         public IActionResult Create()
         {
-            ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "Id", "VehicleSize");
+            ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "Id", "VehicleTypeName");
             var parkingSpots = _context.Set<ParkingSpot>()
-                .Where(p => p.IsAvailable);
-                //.Where(p = p.Size == vehicleType.Size) something like this? but we dont have vehicletype yet
-            // we need to filter on size also, but the size comes from vehicle type which is selected in the view after this is created
-            // i don't know how to do this
+                                .Where(p => p.IsAvailable);
+            
             ViewData["ParkingSpotId"] = new SelectList(parkingSpots,"Id", "ParkingNumber");
             return View(new CreateVehicleViewModel());
         }

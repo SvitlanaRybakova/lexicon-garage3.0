@@ -13,7 +13,7 @@ namespace lexicon_garage3.Web.Models.ViewModels.MembersViewModels
         [Display(Name = "Vehicle Count")]
         public int VehicleCount { get; set; }
 
-        [Display(Name = "Total Parkkng Cost")]
+        [Display(Name = "Total Parking Cost")]
         public decimal TotalParkingCost { get; set; } = 0;
 
         public string SearchTerm { get; set; }
