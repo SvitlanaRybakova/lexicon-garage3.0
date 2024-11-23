@@ -33,11 +33,11 @@ namespace lexicon_garage3.Persistance.Data
            .HasConversion<string>(); 
 
            
-            modelBuilder.Entity<VehicleType>().HasData(
-                new VehicleType { Id = 1, VehicleTypeName = "Car", NumOfWheels = 4, VehicleSize = "Medium" },
-                new VehicleType { Id = 2, VehicleTypeName = "Motorcycle", NumOfWheels = 2, VehicleSize = "Small" },
-                new VehicleType { Id = 3, VehicleTypeName = "Truck", NumOfWheels = 6, VehicleSize = "Large" }
-            );
+            //modelBuilder.Entity<VehicleType>().HasData(
+            //    new VehicleType { Id = 1, VehicleTypeName = "Car", NumOfWheels = 4, VehicleSize = "Medium" },
+            //    new VehicleType { Id = 2, VehicleTypeName = "Motorcycle", NumOfWheels = 2, VehicleSize = "Small" },
+            //    new VehicleType { Id = 3, VehicleTypeName = "Truck", NumOfWheels = 6, VehicleSize = "Large" }
+            //);
 
             
             //modelBuilder.Entity<Member>().HasData(
@@ -46,34 +46,34 @@ namespace lexicon_garage3.Persistance.Data
             //);
 
           
-            modelBuilder.Entity<ParkingSpot>().HasData(
-                new ParkingSpot { Id = "P001", ParkingNumber = 1, HourRate = 10, IsAvailable = true, Size = "Medium", RegNumber = "CAR001" },
-                new ParkingSpot { Id = "P002", ParkingNumber = 2, HourRate = 15, IsAvailable = true, Size = "Small" , RegNumber = "BIKE001" }
-            );
+            //modelBuilder.Entity<ParkingSpot>().HasData(
+            //    new ParkingSpot { Id = "P001", ParkingNumber = 1, HourRate = 10, IsAvailable = true, Size = "Medium", RegNumber = "CAR001" },
+            //    new ParkingSpot { Id = "P002", ParkingNumber = 2, HourRate = 15, IsAvailable = true, Size = "Small" , RegNumber = "BIKE001" }
+            //);
 
     
-            modelBuilder.Entity<Vehicle>().HasData(
-                new Vehicle
-                {
-                    RegNumber = "CAR001",
-                    Color = "Red",
-                    Brand = "Toyota",
-                    Model = "Corolla",
-                    ArrivalTime = DateTime.Now.AddHours(-2),
-                    CheckoutTime = DateTime.Now.AddHours(2),
-                    VehicleTypeId = 1 
-                },
-                new Vehicle
-                {
-                    RegNumber = "BIKE001",
-                    Color = "Black",
-                    Brand = "Yamaha",
-                    Model = "MT-15",
-                    ArrivalTime = DateTime.Now.AddHours(-1),
-                    CheckoutTime = DateTime.Now.AddHours(3),
-                    VehicleTypeId = 2 
-                }
-            );
+            //modelBuilder.Entity<Vehicle>().HasData(
+            //    new Vehicle
+            //    {
+            //        RegNumber = "CAR001",
+            //        Color = "Red",
+            //        Brand = "Toyota",
+            //        Model = "Corolla",
+            //        ArrivalTime = DateTime.Now.AddHours(-2),
+            //        CheckoutTime = DateTime.Now.AddHours(2),
+            //        VehicleTypeId = 1 
+            //    },
+            //    new Vehicle
+            //    {
+            //        RegNumber = "BIKE001",
+            //        Color = "Black",
+            //        Brand = "Yamaha",
+            //        Model = "MT-15",
+            //        ArrivalTime = DateTime.Now.AddHours(-1),
+            //        CheckoutTime = DateTime.Now.AddHours(3),
+            //        VehicleTypeId = 2 
+            //    }
+            //);
 
         }
         public DbSet<Member> Member { get; set; } = default!;

@@ -1,6 +1,7 @@
 ﻿using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -16,11 +17,8 @@ namespace lexicon_garage3.Persistance
         {
             context = _context;
 
-            if (context.Roles.Any()) return;
-
             roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
             userManager = services.GetRequiredService<UserManager<Member>>();
-
 
             var roleNames = new[] { "User", "Admin" };
             var adminEmail = "admin@admin.com";
@@ -28,39 +26,32 @@ namespace lexicon_garage3.Persistance
 
             await AddRolesAsync(roleNames);
 
-
             var admin = await AddAccountAsync("Admin", "Adminsson", "198703012345", adminEmail, "PWadmin-123");
             var user = await AddAccountAsync("User", "Usersson", "198612015645", userEmail, "PWuser-123");
-            await AddUserToRoleAsync(admin, "Admin");
-            await AddUserToRoleAsync(user, "User");
-        }
 
-      
-
-        private static async Task AddUserToRoleAsync(Member user, string roleName)
-        {
-            if (!await userManager.IsInRoleAsync(user, roleName))
-            {
-                var result = await userManager.AddToRoleAsync(user, roleName);
-                if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
-            }
+            // Manually insert the role assignments into AspNetUserRoles
+            await AddUserToRole(admin, "Admin");
+            await AddUserToRole(user, "User");
         }
 
         private static async Task AddRolesAsync(string[] roleNames)
         {
             foreach (var roleName in roleNames)
             {
+          
                 if (await roleManager.RoleExistsAsync(roleName)) continue;
+
+                // Create role
                 var role = new IdentityRole { Name = roleName };
                 var result = await roleManager.CreateAsync(role);
-                if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
+                if (!result.Succeeded) throw new Exception($"Error creating role '{roleName}': {string.Join("\n", result.Errors)}");
             }
         }
 
         private static async Task<Member> AddAccountAsync(string fName, string lName, string personNumber, string accountEmail, string pw)
         {
             var found = await userManager.FindByEmailAsync(accountEmail);
-            if (found != null) return null!;
+            if (found != null) return found;
 
             var user = new Member
             {
@@ -68,6 +59,7 @@ namespace lexicon_garage3.Persistance
                 LastName = lName,
                 PersonNumber = personNumber,
                 Email = accountEmail,
+                UserName = accountEmail,
                 EmailConfirmed = true,
             };
 
@@ -80,7 +72,22 @@ namespace lexicon_garage3.Persistance
 
             return user;
         }
+
+ 
+        private static async Task AddUserToRole(Member user, string roleName)
+        {
+            // Fetch the RoleId
+            var role = await roleManager.FindByNameAsync(roleName);
+            if (role == null)
+            {
+                throw new Exception($"Role '{roleName}' not found.");
+            }
+
+            // Fetch the UserId
+            var userId = user.Id;
+
+            var sql = $"INSERT INTO AspNetUserRoles (UserId, RoleId) VALUES ('{userId}', '{role.Id}')";
+            await context.Database.ExecuteSqlRawAsync(sql);
+        }
     }
-
-
 }
