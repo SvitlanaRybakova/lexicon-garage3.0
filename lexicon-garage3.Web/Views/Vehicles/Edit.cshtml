@@ -29,14 +29,12 @@
                 <span asp-validation-for="Model" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ArrivalTime" class="control-label"></label>
-                <input asp-for="ArrivalTime" class="form-control" />
-                <span asp-validation-for="ArrivalTime" class="text-danger"></span>
+                Last check-in Time: 
+                @Model.ArrivalTime
             </div>
             <div class="form-group">
-                <label asp-for="CheckoutTime" class="control-label"></label>
-                <input asp-for="CheckoutTime" class="form-control" />
-                <span asp-validation-for="CheckoutTime" class="text-danger"></span>
+                Last check-in Time:
+                @Model.CheckoutTime
             </div>
             <div class="form-group">
                 <label asp-for="VehicleTypeId" class="control-label"></label>
