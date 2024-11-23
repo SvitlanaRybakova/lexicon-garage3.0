@@ -4,12 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
 using lexicon_garage3.Web.Models.ViewModels.VehicleTypeViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 
 
 
 namespace lexicon_garage3.Web.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class VehicleTypesController : Controller
     {
         private readonly ApplicationDbContext _context;
