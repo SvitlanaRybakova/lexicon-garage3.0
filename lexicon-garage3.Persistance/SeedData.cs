@@ -86,6 +86,13 @@ namespace lexicon_garage3.Persistance
             // Fetch the UserId
             var userId = user.Id;
 
+            // Check if user already has the role
+            var userHasRole = await userManager.IsInRoleAsync(user, roleName);
+            if (userHasRole)
+            {
+                return; // User already has the role, so if we would try to add it again we get an error
+            }
+
             var sql = $"INSERT INTO AspNetUserRoles (UserId, RoleId) VALUES ('{userId}', '{role.Id}')";
             await context.Database.ExecuteSqlRawAsync(sql);
         }
