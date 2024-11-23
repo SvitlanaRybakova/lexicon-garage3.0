@@ -6,9 +6,13 @@
 
 <h1>My Registered Vehicles</h1>
 
-<p>
-    <a asp-action="Create">Register New</a>
-</p>
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create">Register New</a>
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -34,32 +38,36 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Color)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Brand)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Model)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ArrivalTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CheckoutTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VehicleType.VehicleSize)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.RegNumber">Check In</a> |
-                <a asp-action="Details" asp-route-id="@item.RegNumber">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.RegNumber">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Color)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Brand)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Model)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ArrivalTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CheckoutTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VehicleType.VehicleSize)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.RegNumber">Check In</a> |
+                    <a asp-action="Details" asp-route-id="@item.RegNumber">Details</a> |
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.RegNumber">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
