@@ -9,10 +9,12 @@ using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
 using lexicon_garage3.Web.Models.ViewModels.ParkingSpotsViewModels;
 using System.Reflection.Emit;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace lexicon_garage3.Web.Controllers
 {
+    [Authorize]
     public class ParkingSpotsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -65,6 +67,7 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // GET: ParkingSpots/Create
+        [Authorize(Roles ="Admin")]
         public IActionResult Create()
         {
             return View(new CreateParkingSpotsViewModel());
@@ -73,6 +76,7 @@ namespace lexicon_garage3.Web.Controllers
         // POST: ParkingSpots/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateParkingSpotsViewModel model)
@@ -113,6 +117,7 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // GET: ParkingSpots/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -145,6 +150,7 @@ namespace lexicon_garage3.Web.Controllers
         // POST: ParkingSpots/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, EditParkingSpotViewModel model)
@@ -187,6 +193,7 @@ namespace lexicon_garage3.Web.Controllers
 
 
         // GET: ParkingSpots/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -208,6 +215,7 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // POST: ParkingSpots/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
@@ -256,6 +264,7 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // GET: ParkingSpots/Statistic/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Statistic()
         {
             var parkingSpots = await _context.ParkingSpot.ToListAsync();

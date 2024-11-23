@@ -5,11 +5,12 @@
 }
 
 <h1>All Parking Spaces</h1>
-
+ @if (User.IsInRole("Admin"))
+ {
 <p>
     <a asp-action="Create" class="btn btn-primary">Create Parking Space</a>
 </p>
-
+ }
 
 @Html.Partial("_FilterForm", new IndexParkingSpotViewModel())
 
@@ -55,9 +56,14 @@
                     @Html.DisplayFor(modelItem => item.HourRate) <span>SEK</span>
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit <span>|</span></a>
+                        <a asp-action = "Delete" asp-route-id ="@item.Id">Delete<span>|</span</a>
+                    }
+
                     <form asp-action="BookingToggle" method="post" class="d-inline">
                         <input type="hidden" name="id" value="@item.Id" />
                         @if (item.IsAvailable)
@@ -65,7 +71,6 @@
                             <button type="submit" class="btn btn-success">
                                 <span>book</span>
                             </button>
-
                         }
                         else
                         {
@@ -73,9 +78,9 @@
                                 <span>Unbook</span>
                             </button>
                         }
-
                     </form>
                 </td>
+
             </tr>
         }
     </tbody>

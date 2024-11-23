@@ -1,4 +1,6 @@
+using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
+using lexicon_garage3.Web.Extention;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +8,7 @@ namespace lexicon_garage3.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +18,10 @@ namespace lexicon_garage3.Web
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<Member>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -34,6 +38,7 @@ namespace lexicon_garage3.Web
                 app.UseHsts();
             }
 
+            await app.SeedDataAsync();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
