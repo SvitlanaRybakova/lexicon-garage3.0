@@ -138,7 +138,7 @@ namespace lexicon_garage3.Web.Controllers
 
         // POST: Vehicles/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("RegNumber,Color,Brand,Model,ArrivalTime,CheckoutTime,VehicleTypeId")] Vehicle vehicle)
@@ -173,6 +173,7 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // GET: Vehicles/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
