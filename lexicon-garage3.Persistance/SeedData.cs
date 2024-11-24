@@ -58,9 +58,9 @@ namespace lexicon_garage3.Persistance
                 FirstName = fName,
                 LastName = lName,
                 PersonNumber = personNumber,
-                Email = accountEmail,
+                //Email = accountEmail,
                 UserName = accountEmail,
-                EmailConfirmed = true,
+                //EmailConfirmed = true,
             };
 
             var result = await userManager.CreateAsync(user, pw);
@@ -86,8 +86,28 @@ namespace lexicon_garage3.Persistance
             // Fetch the UserId
             var userId = user.Id;
 
-            var sql = $"INSERT INTO AspNetUserRoles (UserId, RoleId) VALUES ('{userId}', '{role.Id}')";
-            await context.Database.ExecuteSqlRawAsync(sql);
+            //var sql = $"INSERT INTO AspNetUserRoles (UserId, RoleId) VALUES ('{userId}', '{role.Id}')";
+            //await context.Database.ExecuteSqlRawAsync(sql);
+
+            // Check if the User-Role mapping already exists
+            var existsQuery = $@"
+            SELECT COUNT(*)
+            FROM AspNetUserRoles
+            WHERE UserId = '{userId}' AND RoleId = '{role.Id}'";
+
+            var exists = await context.Database.ExecuteSqlRawAsync(existsQuery);
+
+            if (exists == 0) // If no such record exists, insert the new one
+            {
+                var insertQuery = $@"
+            INSERT INTO AspNetUserRoles (UserId, RoleId)
+            VALUES ('{userId}', '{role.Id}')";
+                await context.Database.ExecuteSqlRawAsync(insertQuery);
+            }
+            else
+            {
+                Console.WriteLine($"User '{userId}' is already assigned to role '{roleName}'.");
+            }
         }
     }
 }
