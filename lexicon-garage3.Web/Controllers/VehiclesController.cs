@@ -71,12 +71,12 @@ namespace lexicon_garage3.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var regNumberExists = _context.Vehicle.FindAsync(viewModel.RegNumber) != null;
-                if (regNumberExists)
-                {
-                    ViewData["ErrorMessage"] = $"Registration number '{viewModel.RegNumber}' already exists!";
-                    return View(viewModel);
-                }
+                //var regNumberExists = _context.Vehicle.FindAsync(viewModel.RegNumber) != null;
+                //if (regNumberExists)
+                //{
+                //    ViewData["ErrorMessage"] = $"Registration number '{viewModel.RegNumber}' already exists!";
+                //    return View(viewModel);
+                //}
             
 
                 // get logged in user so we can set it to own the vehicle
