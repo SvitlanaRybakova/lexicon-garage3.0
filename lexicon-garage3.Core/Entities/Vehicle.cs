@@ -21,6 +21,8 @@ namespace lexicon_garage3.Core.Entities
         // FK
         public int VehicleTypeId { get; set; }
 
+        public string MemberId { get; set; }
+
         // nav props
         public VehicleType VehicleType { get; set; } // 1-M
         public ParkingSpot ParkingSpot { get; set; } // 1-1 
