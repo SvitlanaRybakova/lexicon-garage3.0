@@ -28,8 +28,9 @@ namespace lexicon_garage3.Web.Controllers
         public async Task<IActionResult> IndexParkingPlace()
         {
             var parkingSpots = await _context.ParkingSpot
-          .Include(p => p.Vehicle)
-          .ToListAsync();
+                .Include(p => p.Vehicle)
+                .OrderBy(p => p.ParkingNumber)
+                .ToListAsync();
 
             var viewModels = parkingSpots.Select(p => new IndexParkingSpotViewModel
             {
@@ -39,8 +40,6 @@ namespace lexicon_garage3.Web.Controllers
                 IsAvailable = p.IsAvailable,
                 HourRate = p.HourRate,
             }).ToList();
-
-          
 
 
             return View("Index", viewModels);
@@ -67,7 +66,7 @@ namespace lexicon_garage3.Web.Controllers
         }
 
         // GET: ParkingSpots/Create
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View(new CreateParkingSpotsViewModel());
@@ -102,11 +101,11 @@ namespace lexicon_garage3.Web.Controllers
                 }
                 catch (Exception)
                 {
-
                     TempData["ErrorMessage"] = "An error occurred while creating the parking spot.";
                     return View(model);
                 }
             }
+
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
@@ -188,6 +187,7 @@ namespace lexicon_garage3.Web.Controllers
                     return View(model);
                 }
             }
+
             return View(model); // in case not passing validation
         }
 
@@ -245,12 +245,23 @@ namespace lexicon_garage3.Web.Controllers
             {
                 return NotFound();
             }
+
             var parkingSpot = await _context.ParkingSpot.FindAsync(id);
             if (parkingSpot == null)
             {
                 return NotFound();
             }
-            parkingSpot.IsAvailable = !parkingSpot.IsAvailable;
+
+            if (parkingSpot.IsAvailable)
+            {
+                parkingSpot.IsAvailable = false;
+            }
+            else // if we should unbook a booked spot we also have to remove the vehicle that uses it
+            {
+                parkingSpot.IsAvailable = true;
+                parkingSpot.RegNumber = null;
+            }
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -260,6 +271,7 @@ namespace lexicon_garage3.Web.Controllers
             {
                 TempData["ErrorMessage"] = "An error occurred while updating the parking spot availability.";
             }
+
             return RedirectToAction(nameof(IndexParkingPlace));
         }
 
@@ -297,7 +309,8 @@ namespace lexicon_garage3.Web.Controllers
             {
                 parkingSpots = parkingSpots.Where(m => m.ParkingNumber == viewModel.ParkingNumber);
             }
-;
+
+            ;
 
             var viewModels = parkingSpots.Select(p => new IndexParkingSpotViewModel
             {
@@ -307,9 +320,8 @@ namespace lexicon_garage3.Web.Controllers
                 IsAvailable = p.IsAvailable,
                 HourRate = p.HourRate,
             }).ToList();
-            
+
             return View("Index", viewModels);
         }
-
     }
 }

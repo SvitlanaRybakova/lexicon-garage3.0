@@ -26,5 +26,7 @@ namespace lexicon_garage3.Core.Entities
         public VehicleType VehicleType { get; set; } // 1-M
         public ParkingSpot ParkingSpot { get; set; } // 1-1 
         public Member Member { get; set; }
+
+        public bool IsCheckedIn => ParkingSpot != null;
     }
 }

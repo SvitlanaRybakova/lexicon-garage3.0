@@ -1,4 +1,5 @@
-﻿@model lexicon_garage3.Core.Entities.Vehicle
+﻿@using NPOI.SS.Formula.Functions
+@model lexicon_garage3.Web.Models.ViewModels.VehicleViewModels.EditVehicleViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -6,43 +7,73 @@
 
 <h1>Edit</h1>
 
-<h4>Vehicle</h4>
-<hr />
+<h4>Vehicle @Model.RegNumber</h4>
+<hr/>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="RegNumber" />
-            <div class="form-group">
-                <label asp-for="Color" class="control-label"></label>
-                <input asp-for="Color" class="form-control" />
-                <span asp-validation-for="Color" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Brand" class="control-label"></label>
-                <input asp-for="Brand" class="form-control" />
-                <span asp-validation-for="Brand" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Model" class="control-label"></label>
-                <input asp-for="Model" class="form-control" />
-                <span asp-validation-for="Model" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                Last check-in Time: 
-                @Model.ArrivalTime
-            </div>
-            <div class="form-group">
-                Last check-in Time:
-                @Model.CheckoutTime
-            </div>
+            <input type="hidden" asp-for="RegNumber"/>
             <div class="form-group">
                 <label asp-for="VehicleTypeId" class="control-label"></label>
                 <select asp-for="VehicleTypeId" class="form-control" asp-items="ViewBag.VehicleTypeId"></select>
                 <span asp-validation-for="VehicleTypeId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <label asp-for="Color" class="control-label"></label>
+                <input asp-for="Color" class="form-control"/>
+                <span asp-validation-for="Color" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Brand" class="control-label"></label>
+                <input asp-for="Brand" class="form-control"/>
+                <span asp-validation-for="Brand" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Model" class="control-label"></label>
+                <input asp-for="Model" class="form-control"/>
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+            @{
+                if (Model.HasEverCheckedIn) // show if it has ever been checked in
+                {
+                    <div class="form-group">
+                        Last check-in Time:
+                        @Model.ArrivalTime
+                    </div>
+                }
+
+                if (Model.CheckoutTime > DateTime.MinValue) // show if it has ever been checked out
+                {
+                    <div class="form-group">
+                        Last check-out Time:
+                        @Model.CheckoutTime
+                    </div>
+                }
+
+                if (Model.IsCheckedIn)
+                {
+                    <h4>Vehicle is checked in</h4>
+                    <div class="form-group">
+                        Parking spot: @Model.ParkingSpot.ParkingNumber<br/>
+                        Parking spot size: @Model.ParkingSpot.Size<br/>
+                        Price per hour: @Model.ParkingSpot.HourRate kr<br/>
+
+                    </div>
+                }
+                else
+                {
+                    <h4>Check in vehicle</h4>
+                    <div class="form-group">
+                        <label asp-for="ParkingSpotId" class="control-label"></label>
+                        <select asp-for="ParkingSpotId" class="form-control" asp-items="ViewBag.ParkingSpotId"></select>
+                    </div>
+                }
+            }
+
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary"/>
             </div>
         </form>
     </div>
@@ -53,5 +84,11 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script type="text/javascript">
+        // get the form and add a confirmation dialog on submit
+        document.querySelector("[action='/Vehicles/Edit']").onsubmit = function () {
+            return confirm("Are you sure you want to park this vehicle?");
+        };
+    </script>
 }

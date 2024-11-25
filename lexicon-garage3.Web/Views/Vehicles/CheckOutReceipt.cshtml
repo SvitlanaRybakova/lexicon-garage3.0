@@ -1,0 +1,83 @@
+﻿@model lexicon_garage3.Web.Models.ViewModels.VehicleViewModels.CheckOutReceiptViewModel
+
+@* @{
+    ViewData["Title"] = "Parking Receipt";
+} *@
+<h1>Parking receipt</h1>
+
+<div>
+    <h4>This vehicle was checked out!</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Color)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Color)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Brand)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Brand)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Model)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Model)
+        </dd>
+        <dt class = "col-sm-2">
+            Arrival Time
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ArrivalTime)
+        </dd>     
+        <dt class = "col-sm-2">
+            Check-out time
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CheckoutTime)
+        </dd>
+        <dt class = "col-sm-2">
+            Vehicle Type
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.VehicleType.VehicleTypeName)
+        </dd>    
+        <dt class = "col-sm-2">
+            Parking Spot
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ParkingSpot.ParkingNumber)
+        </dd>  
+        <dt class = "col-sm-2">
+            Parking spot size
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ParkingSpot.Size)
+        </dd> 
+        <dt class = "col-sm-2">
+            Price per hour
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ParkingSpot.HourRate) kr
+        </dd>  
+        <dt class = "col-sm-2">
+            Total time parked
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TotalTimeString)
+        </dd>
+        <dt class = "col-sm-2">
+            Total cost
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TotalCost) kr
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.RegNumber">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -61,7 +61,7 @@
                     @if (User.IsInRole("Admin"))
                     {
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit <span>|</span></a>
-                        <a asp-action = "Delete" asp-route-id ="@item.Id">Delete<span>|</span</a>
+                        <a asp-action = "Delete" asp-route-id ="@item.Id">Delete<span>|</span></a>
                     }
 
                     <form asp-action="BookingToggle" method="post" class="d-inline">
