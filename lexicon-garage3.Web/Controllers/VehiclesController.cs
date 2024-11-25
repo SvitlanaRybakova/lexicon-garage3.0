@@ -75,6 +75,7 @@ namespace lexicon_garage3.Web.Controllers
                 var regNumberExists = await _context.Vehicle.AnyAsync(v => v.RegNumber == viewModel.RegNumber);
                 if (regNumberExists)
                 {
+                    ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "Id", "VehicleTypeName");
                     ViewData["ErrorMessage"] = $"Registration number '{viewModel.RegNumber}' already exists!";
                     return View(viewModel);
                 }
