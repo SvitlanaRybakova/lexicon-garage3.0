@@ -1,0 +1,59 @@
+﻿@model IEnumerable<lexicon_garage3.Web.Models.ViewModels.VehicleViewModels.AdminIndexVehicleParkingViewModel>
+
+
+@{
+    ViewData["Title"] = "AdminIndex";
+}
+
+<h1>Vehicle Parking List</h1>
+
+<p>
+    <a asp-action="Create">Register New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Owner)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VehicleType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RegNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ParkingPlace)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Owner)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VehicleType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RegNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ParkingPlace)
+                </td>
+                <td>
+                    <a asp-action="Edit"  class="btn btn-success" asp-route-id="@item.RegNumber">Check In</a> |
+                    <a asp-action="Details"  class="btn btn-info" asp-route-id="@item.RegNumber">Details</a> |
+                    @if (User.IsInRole("Admin"))
+                    {
+                                <a asp-action="Delete"  class="btn btn-outline-danger" asp-route-id="@item.RegNumber">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -5,6 +5,7 @@ using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
 using lexicon_garage3.Web.Models.ViewModels.VehicleViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace lexicon_garage3.Web.Controllers
 {
@@ -12,10 +13,12 @@ namespace lexicon_garage3.Web.Controllers
     public class VehiclesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Member> _userManager;
 
-        public VehiclesController(ApplicationDbContext context)
+        public VehiclesController(ApplicationDbContext context, UserManager<Member> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Vehicles
@@ -23,6 +26,84 @@ namespace lexicon_garage3.Web.Controllers
         {
             var applicationDbContext = _context.Vehicle.Include(v => v.VehicleType);
             return View(await applicationDbContext.ToListAsync());
+        }
+
+        
+        public async Task<IActionResult> MemberIndex()
+        {
+
+            var user = await _userManager.GetUserAsync(User);
+
+            // Check if the user is null
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var userId = user.Id;
+
+
+            var vehiclesForUser = await _context.Vehicle
+                .Where(v => v.MemberId == userId)
+                .ToListAsync();
+                        Console.WriteLine(vehiclesForUser.Count);
+            //var applicationDbContext = _context.Vehicle.Include(v => v.VehicleType.VehicleTypeName);
+
+            var memberViewData = await _context.Vehicle
+                                    .Where(v => v.MemberId == userId)
+                                    .Include(v => v.VehicleType) // Include related VehicleType
+                                    .Select(v => new MemberIndexVehicleParkingViewModel
+                                    {
+                                        RegNumber = v.RegNumber,
+                                        Color = v.Color,
+                                        Brand = v.Brand,
+                                        VehicleType = v.VehicleType.VehicleTypeName // Access VehicleType data
+                                    }).ToListAsync(); // Filter by MemberId (userId)
+
+            // Get roles
+            var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("Admin"))
+            {
+                return View("AdminIndex", "Vehicles");
+            }
+            else
+            {
+                return View(memberViewData);
+            }
+
+            //return View("Index", "Vehicles");
+           
+           // return View(await applicationDbContext.ToListAsync());
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AdminIndex()
+        {
+            // Fetch data from each table
+
+            var vehicleParkingData = await _context.Vehicle
+                                    .Join(_context.Member,
+                                          vehicle => vehicle.MemberId,
+                                          member => member.Id,
+                                          (vehicle, member) => new { vehicle, member })
+                                    .Join(_context.VehicleType,
+                                          vm => vm.vehicle.VehicleTypeId,
+                                          vehicleType => vehicleType.Id,
+                                          (vm, vehicleType) => new { vm.vehicle, vm.member, vehicleType })
+                                    .Join(_context.ParkingSpot,
+                                          vmt => vmt.vehicle.RegNumber,
+                                          parkingSpot => parkingSpot.RegNumber,
+                                          (vmt, parkingSpot) => new AdminIndexVehicleParkingViewModel
+                                          {
+                                              Owner = $"{vmt.member.FirstName} {vmt.member.LastName}",
+                                              VehicleType = vmt.vehicleType.VehicleTypeName,
+                                              RegNumber = vmt.vehicle.RegNumber,
+                                              ParkingPlace = parkingSpot.ParkingNumber
+                                          })
+                                    .ToListAsync();
+
+            return View(vehicleParkingData);
         }
 
         // GET: Vehicles/Details/5
@@ -76,7 +157,8 @@ namespace lexicon_garage3.Web.Controllers
                     Model = viewModel.Model,
                     ArrivalTime = DateTime.Now,
                     VehicleTypeId = viewModel.VehicleTypeId,
-                    VehicleType = vehicleType
+                    VehicleType = vehicleType,
+                    
                 };
                 _context.Add(vehicle);
 
@@ -166,6 +248,14 @@ namespace lexicon_garage3.Web.Controllers
                         throw;
                     }
                 }
+
+                // Check the role and redirect
+                if (User.IsInRole("Admin"))
+                    return RedirectToAction("AdminIndex", "Vehicle");
+                else 
+                    return RedirectToAction("Index", "Vehicle");
+
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "Id", "VehicleSize", vehicle.VehicleTypeId);
