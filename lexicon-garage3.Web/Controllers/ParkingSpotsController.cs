@@ -140,8 +140,7 @@ namespace lexicon_garage3.Web.Controllers
                 RegNumber = parkingSpot.RegNumber
             };
 
-            ViewData["RegNumber"] =
-                new SelectList(_context.Set<Vehicle>(), "RegNumber", "RegNumber", parkingSpot.RegNumber);
+            ViewData["RegNumber"] = new SelectList(_context.Set<Vehicle>(), "RegNumber", "RegNumber", parkingSpot.RegNumber);
 
 
             return View(viewModel);

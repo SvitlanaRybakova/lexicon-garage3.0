@@ -16,6 +16,9 @@
     <thead>
         <tr>
             <th>
+                Registration number
+            </th> 
+            <th>
                 @Html.DisplayNameFor(model => model.Color)
             </th>
             <th>
@@ -33,6 +36,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.VehicleType)
             </th>
+            <th>
+                Parking spot
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -40,6 +46,9 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RegNumber)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Color)
                 </td>
@@ -53,19 +62,45 @@
                     @Html.DisplayFor(modelItem => item.ArrivalTime)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CheckoutTime)
+                    @if (item.CheckoutTime == DateTime.MinValue)
+                    {
+                        <span>Never checked out</span>
+                    }
+                    else
+                    {
+                        <span>@item.CheckoutTime</span>
+                    }
+                    @* @Html.DisplayFor(modelItem => item.CheckoutTime) *@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.VehicleType.VehicleSize)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.RegNumber">Check In</a> |
-                    <a asp-action="Details" asp-route-id="@item.RegNumber">Details</a> |
+                    @if (item.ParkingSpot != null)
+                    {
+                        <span>@item.ParkingSpot.ParkingNumber</span>
+                    }
+                    else
+                    {
+                        <span>Not checked in</span>
+                    }
+                </td>
+                <td>
+                    @if (item.IsCheckedIn)
+                    {
+                        <a asp-action="CheckOutReceipt" asp-route-id="@item.RegNumber">Check Out</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.RegNumber">Check In</a>
+                    }
+                    | <a asp-action="Details" asp-route-id="@item.RegNumber">Details</a> |
                     @if (User.IsInRole("Admin"))
                     {
                         <a asp-action="Delete" asp-route-id="@item.RegNumber">Delete</a>
                     }
                 </td>
+
             </tr>
         }
     </tbody>

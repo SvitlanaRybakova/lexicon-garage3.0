@@ -5,6 +5,7 @@ using lexicon_garage3.Core.Entities;
 using lexicon_garage3.Persistance.Data;
 using lexicon_garage3.Web.Models.ViewModels.VehicleViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace lexicon_garage3.Web.Controllers
 {
@@ -12,16 +13,25 @@ namespace lexicon_garage3.Web.Controllers
     public class VehiclesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Member> _userManager;
 
-        public VehiclesController(ApplicationDbContext context)
+        public VehiclesController(ApplicationDbContext context, UserManager<Member> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Vehicles
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Vehicle.Include(v => v.VehicleType);
+            var user = await _userManager.GetUserAsync(User);  // get logged in user
+            if (user == null) return RedirectToAction("Login", "Account");   // if not logged in, send to login page
+
+            
+            var applicationDbContext = _context.Vehicle
+                .Include(v => v.VehicleType)
+                .Include(v => v.ParkingSpot)
+                .Where(v => v.MemberId == user.Id);  // only get vehicles belonging to logged-in user
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -48,10 +58,6 @@ namespace lexicon_garage3.Web.Controllers
         public IActionResult Create()
         {
             ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "Id", "VehicleTypeName");
-            var parkingSpots = _context.Set<ParkingSpot>()
-                                .Where(p => p.IsAvailable);
-            
-            ViewData["ParkingSpotId"] = new SelectList(parkingSpots,"Id", "ParkingNumber");
             return View(new CreateVehicleViewModel());
         }
 
@@ -62,8 +68,21 @@ namespace lexicon_garage3.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateVehicleViewModel viewModel)
         {
+
             if (ModelState.IsValid)
             {
+                var regNumberExists = _context.Vehicle.FindAsync(viewModel.RegNumber) != null;
+                if (regNumberExists)
+                {
+                    ViewData["ErrorMessage"] = $"Registration number '{viewModel.RegNumber}' already exists!";
+                    return View(viewModel);
+                }
+            
+
+                // get logged in user so we can set it to own the vehicle
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return RedirectToAction("Login", "Account");
+
                 var vehicleType = await _context.VehicleType
                     .FirstOrDefaultAsync(m => m.Id == viewModel.VehicleTypeId);
 
@@ -76,35 +95,29 @@ namespace lexicon_garage3.Web.Controllers
                     Model = viewModel.Model,
                     ArrivalTime = DateTime.Now,
                     VehicleTypeId = viewModel.VehicleTypeId,
-                    VehicleType = vehicleType
+                    VehicleType = vehicleType,
+                    MemberId = user.Id
                 };
                 _context.Add(vehicle);
 
-                //set owner of vehicle to the first user in the database, this should be instead the logged in user when you can log in
-                var member = await _context.Member.FirstAsync();//TODO:change to logged in user id
-                member.Vehicles.Add(vehicle);
-
-                //set the parking spot
-                var parkingSpot = await _context.ParkingSpot.FirstAsync(p => p.Id == viewModel.ParkingSpotId);
-                parkingSpot.RegNumber = viewModel.RegNumber;
-                parkingSpot.IsAvailable = false;
-                parkingSpot.Vehicle = vehicle;
+                user.Vehicles.Add(vehicle);
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(ParkingReceipt), new { regNumber = vehicle.RegNumber });
+                return RedirectToAction(nameof(Index), new {regNumber = vehicle.RegNumber});
             }
 
             ViewData["VehicleTypeId"] =
                 new SelectList(_context.Set<VehicleType>(), "Id", "VehicleSize", viewModel.VehicleTypeId);
             return View(viewModel);
         }
+
         // GET: Vehicles/ParkingReceipt
         public async Task<IActionResult> ParkingReceipt(string regNumber)
         {
             var vehicle = await _context.Vehicle
                 .Include(v => v.VehicleType)
                 .Include(v => v.ParkingSpot)
-                .FirstAsync(v => v.RegNumber == regNumber);
+                .FirstOrDefaultAsync(v => v.RegNumber == regNumber);
 
             var parkingReceiptViewModel = new ParkingReceiptViewModel()
             {
@@ -119,6 +132,33 @@ namespace lexicon_garage3.Web.Controllers
             };
             return View(parkingReceiptViewModel);
         }
+
+        // GET: Vehicles/CheckOutReceipt
+        public async Task<IActionResult> CheckOutReceipt(string id)
+        {
+            var vehicle = await _context.Vehicle
+                .Include(v => v.VehicleType)
+                .Include(v => v.ParkingSpot)
+                .FirstOrDefaultAsync(v => v.RegNumber == id);
+
+            var checkOutReceiptViewModel = new CheckOutReceiptViewModel()
+            {
+                RegNumber = vehicle.RegNumber,
+                Brand = vehicle.Brand,
+                Model = vehicle.Model,
+                Color = vehicle.Color,
+                ArrivalTime = vehicle.ArrivalTime,
+                CheckoutTime = DateTime.Now,
+                VehicleType = vehicle.VehicleType,
+                ParkingSpot = vehicle.ParkingSpot
+            };
+            vehicle.CheckoutTime = checkOutReceiptViewModel.CheckoutTime;
+            vehicle.ParkingSpot.RegNumber = null;
+            vehicle.ParkingSpot.IsAvailable = true;
+            await _context.SaveChangesAsync();
+            return View(checkOutReceiptViewModel);
+        }
+
         // GET: Vehicles/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
@@ -127,13 +167,37 @@ namespace lexicon_garage3.Web.Controllers
                 return NotFound();
             }
 
-            var vehicle = await _context.Vehicle.FindAsync(id);
+            //var vehicle = await _context.Vehicle.FindAsync(id);
+            var vehicle = await _context.Vehicle
+                .Include(v => v.ParkingSpot)
+                .Include(v => v.VehicleType)
+                .FirstOrDefaultAsync(v => v.RegNumber == id);
             if (vehicle == null)
             {
                 return NotFound();
             }
-            ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "Id", "VehicleSize", vehicle.VehicleTypeId);
-            return View(vehicle);
+
+            var viewModel = new EditVehicleViewModel()
+            {
+                RegNumber = vehicle.RegNumber,
+                Color = vehicle.Color,
+                Brand = vehicle.Brand,
+                Model = vehicle.Model,
+                ArrivalTime = vehicle.ArrivalTime,
+                VehicleTypeId = vehicle.VehicleTypeId,
+                ParkingSpotId = vehicle.ParkingSpot?.Id,
+                ParkingSpot = vehicle.ParkingSpot
+            };
+
+            var parkingSpots = _context.Set<ParkingSpot>()
+                .Where(p => p.IsAvailable && p.Size == vehicle.VehicleType.VehicleSize);
+
+            ViewData["ParkingSpotId"] = new SelectList(parkingSpots, "Id", "ParkingNumber");
+
+            ViewData["VehicleTypeId"] =
+                new SelectList(_context.Set<VehicleType>(), "Id", "VehicleSize", vehicle.VehicleTypeId);
+
+            return View(viewModel);
         }
 
         // POST: Vehicles/Edit/5
@@ -141,23 +205,41 @@ namespace lexicon_garage3.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("RegNumber,Color,Brand,Model,ArrivalTime,CheckoutTime,VehicleTypeId")] Vehicle vehicle)
+        public async Task<IActionResult> Edit(EditVehicleViewModel viewModel)
         {
-            if (id != vehicle.RegNumber)
-            {
-                return NotFound();
-            }
+            //if (id != vehicle.RegNumber)
+            //{
+            //    return NotFound();
+            //}
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var vehicle = await _context.Vehicle.FirstAsync(v => v.RegNumber == viewModel.RegNumber);
+                    vehicle.Brand = viewModel.Brand;
+                    vehicle.Model = viewModel.Model;
+                    vehicle.Color = viewModel.Color;
+                    vehicle.VehicleTypeId = viewModel.VehicleTypeId;
+                    vehicle.VehicleType = await _context.VehicleType.FirstAsync(t => t.Id == viewModel.VehicleTypeId);
+
+                    if (vehicle.ParkingSpot == null)
+                    {
+                        //set the parking spot
+                        var parkingSpot = await _context.ParkingSpot.FirstAsync(p => p.Id == viewModel.ParkingSpotId);
+                        parkingSpot.RegNumber = viewModel.RegNumber;
+                        parkingSpot.IsAvailable = false;
+                        parkingSpot.Vehicle = vehicle;
+                        vehicle.ParkingSpot = parkingSpot;
+                        vehicle.ArrivalTime = DateTime.Now;
+                    }
+
                     _context.Update(vehicle);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VehicleExists(vehicle.RegNumber))
+                    if (!VehicleExists(viewModel.RegNumber))
                     {
                         return NotFound();
                     }
@@ -166,10 +248,11 @@ namespace lexicon_garage3.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction(nameof(ParkingReceipt), new {regNumber = viewModel.RegNumber});
             }
-            ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "Id", "VehicleSize", vehicle.VehicleTypeId);
-            return View(vehicle);
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Vehicles/Delete/5
