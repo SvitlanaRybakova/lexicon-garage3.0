@@ -88,6 +88,7 @@ namespace lexicon_garage3.Web.Areas.Identity.Pages.Account
             [DataType(DataType.Text)]
             [StringLength(12, ErrorMessage = "The {0} must be exactly {1} characters long.", MinimumLength = 12)]
             [PersonNumberValidation(ErrorMessage = "Correct format is YYYYMMDDXXXX")]
+            [MinimumAgeValidation(18, ErrorMessage = "Person must be at least 18 years old to register.")]
             [Display(Name = "Personal Number")]
             public string PersonNumber { get; set; }
 

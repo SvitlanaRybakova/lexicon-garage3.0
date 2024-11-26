@@ -1,34 +1,26 @@
-﻿@model IEnumerable<lexicon_garage3.Core.Entities.Vehicle>
-
+﻿@model IEnumerable<lexicon_garage3.Web.Models.ViewModels.VehicleViewModels.MemberIndexVehicleParkingViewModel>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "MemberIndex";
 }
 
 <h1>My Registered Vehicles</h1>
 
-
-    <p>
-        <a asp-action="Create">Register New</a>
-    </p>
+<p>
+    <a asp-action="Create">Register New</a>
+</p>
 
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Color)
+                @Html.DisplayNameFor(model => model.RegNumber)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Brand)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Model)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ArrivalTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CheckoutTime)
+                @Html.DisplayNameFor(model => model.Color)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.VehicleType)
@@ -41,22 +33,16 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Color)
+                    @Html.DisplayFor(modelItem => item.RegNumber)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Brand)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Model)
+                    @Html.DisplayFor(modelItem => item.Color)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ArrivalTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CheckoutTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.VehicleType.VehicleSize)
+                    @Html.DisplayFor(modelItem => item.VehicleType)
                 </td>
                 <td>
                     <a asp-action="Edit" class="btn btn-success" asp-route-id="@item.RegNumber">Check In</a> |
