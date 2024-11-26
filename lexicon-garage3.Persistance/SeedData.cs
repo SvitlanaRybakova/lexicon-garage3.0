@@ -86,28 +86,17 @@ namespace lexicon_garage3.Persistance
             // Fetch the UserId
             var userId = user.Id;
 
-            //var sql = $"INSERT INTO AspNetUserRoles (UserId, RoleId) VALUES ('{userId}', '{role.Id}')";
-            //await context.Database.ExecuteSqlRawAsync(sql);
 
-            // Check if the User-Role mapping already exists
-            var existsQuery = $@"
-            SELECT COUNT(*)
-            FROM AspNetUserRoles
-            WHERE UserId = '{userId}' AND RoleId = '{role.Id}'";
-
-            var exists = await context.Database.ExecuteSqlRawAsync(existsQuery);
-
-            if (exists == 0) // If no such record exists, insert the new one
+            // Check if user already has the role
+            var userHasRole = await userManager.IsInRoleAsync(user, roleName);
+            if (userHasRole)
             {
-                var insertQuery = $@"
-            INSERT INTO AspNetUserRoles (UserId, RoleId)
-            VALUES ('{userId}', '{role.Id}')";
-                await context.Database.ExecuteSqlRawAsync(insertQuery);
+                return; // User already has the role, so if we would try to add it again we get an error
             }
-            else
-            {
-                Console.WriteLine($"User '{userId}' is already assigned to role '{roleName}'.");
-            }
+
+            var sql = $"INSERT INTO AspNetUserRoles (UserId, RoleId) VALUES ('{userId}', '{role.Id}')";
+            await context.Database.ExecuteSqlRawAsync(sql);
+
         }
     }
 }

@@ -168,7 +168,7 @@ namespace lexicon_garage3.Web.Controllers
                     if (parkingSpot == null)
                     {
                         TempData["ErrorMessage"] = "Parking spot not found!";
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction(nameof(IndexParkingPlace));
                     }
 
                     parkingSpot.Size = model.Size.ToString();
@@ -228,7 +228,7 @@ namespace lexicon_garage3.Web.Controllers
 
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Parking spot delete successfully!";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexParkingPlace));
         }
 
         private bool ParkingSpotExists(string id)

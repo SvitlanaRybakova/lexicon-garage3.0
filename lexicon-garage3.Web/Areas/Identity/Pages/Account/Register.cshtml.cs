@@ -80,6 +80,7 @@ namespace lexicon_garage3.Web.Areas.Identity.Pages.Account
             [Required]
             [DataType(DataType.Text)]
             [Display(Name = "Last Name")]
+            [CheckLastName]
             public string LastName { get; set; }
 
 
